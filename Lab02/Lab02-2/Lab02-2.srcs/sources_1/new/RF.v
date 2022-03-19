@@ -1,0 +1,39 @@
+`timescale 100ps / 100ps
+
+module RF(
+    input [1:0] addr1,
+    input [1:0] addr2,
+    input [1:0] addr3,
+    input [15:0] data3,
+
+    input write,
+    input clk,
+    input reset_n,
+
+    output [15:0] data1,
+    output [15:0] data2
+    );
+
+    reg [15:0] internal_register[3:0];
+    reg [15:0] data1;
+    reg [15:0] data2;
+
+    always @(*) begin // asynchronous read functionality
+        data1 = internal_register[addr1];
+        data2 = internal_register[addr2];
+    end
+
+    always @(posedge clk or negedge reset_n) begin
+        if (!reset_n) begin
+            internal_register[2'b00] <= 16'b0;
+            internal_register[2'b01] <= 16'b0;
+            internal_register[2'b10] <= 16'b0;
+            internal_register[2'b11] <= 16'b0;
+        end
+        else begin
+            if (write) begin
+                internal_register[addr3] <= data3;
+            end
+        end
+    end
+endmodule
