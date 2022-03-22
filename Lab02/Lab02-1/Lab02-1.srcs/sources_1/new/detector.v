@@ -17,8 +17,8 @@ module detector(
             state <= 2'b00;
         end
         else begin
-                case (state)
-                    2'b00: {out, state} <= in ? 3'b001 : 3'b000; // 
+                case (state) // with state and input to update state and output
+                    2'b00: {out, state} <= in ? 3'b001 : 3'b000; 
                     2'b01: {out, state} <= in ? 3'b011 : 3'b110;
                     2'b10: {out, state} <= in ? 3'b001 : 3'b000;
                     2'b11: {out, state} <= in ? 3'b011 : 3'b010;
