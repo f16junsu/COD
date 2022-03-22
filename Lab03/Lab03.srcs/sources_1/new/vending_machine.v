@@ -89,9 +89,16 @@ module vending_machine (
 
 		// when return triggered
 		if (i_trigger_return) begin
-			o_current_total_buffer = 0;
+			o_return_coin_buffer = 0; // return coin initialize
+			while (o_current_total_buffer) begin
+				if (o_current_total_buffer >= kkCoinValue[2])
+					o_current_total_buffer = o_current_total_buffer - kkCoinValue[2];
+				else if (o_current_total_buffer >= kkCoinValue[1])
+					o_current_total_buffer = o_current_total_buffer - kkCoinValue[1];
+				else o_current_total_buffer = o_current_total_buffer - kkCoinValue[0];
+				o_return_coin_buffer = o_return_coin_buffer + 1;
+			end
 			o_available_item_buffer = 0;
-			o_return_coin_buffer = 1000;
 		end
 	end
 
