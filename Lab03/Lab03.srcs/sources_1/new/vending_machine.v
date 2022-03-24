@@ -22,15 +22,14 @@ module vending_machine (
 	input clk;
 	input reset_n;
 
-	input [`kNumCoins-1:0] i_input_coin; // 3bit
-	input [`kNumItems-1:0] i_select_item; // 4bit
+	input [`kNumCoins-1:0] i_input_coin;
+	input [`kNumItems-1:0] i_select_item;
 	input i_trigger_return;
 
 	output [`kNumItems-1:0] o_available_item;
 	output [`kNumItems-1:0] o_output_item;
 	output [`kReturnCoins-1:0] o_return_coin;
 	output [`kTotalBits-1:0] o_current_total;
-
 
 	// Net constant values (prefix kk & CamelCase)
 	wire [31:0] kkItemPrice [`kNumItems-1:0];	// Price of each item
@@ -43,84 +42,149 @@ module vending_machine (
 	assign kkCoinValue[1] = 500;
 	assign kkCoinValue[2] = 1000;
 
+	// output types
+	reg [`kNumItems-1:0] o_available_item;
+	reg [`kNumItems-1:0] o_output_item;
+	reg [`kReturnCoins-1:0] o_return_coin;
+	reg [`kTotalBits-1:0] o_current_total;
+
 	// Internal states. You may add your own reg variables.
+	reg [`kTotalBits-1:0] current_total; // state
+	reg return_triggered; // state
+	reg [`kNumItems-1:0] selected_item; // state;
+	// reg [`kItemBits-1:0] num_items [`kNumItems-1:0];
+	reg [`kCoinBits-1:0] num_coins [`kNumCoins-1:0]; // state
 
-	// reg [`kItemBits-1:0] num_items [`kNumItems-1:0]; //use if needed
-	// reg [`kCoinBits-1:0] num_coins [`kNumCoins-1:0]; //use if needed
-
-	// Outputs types
-	reg [`kNumItems-1:0] o_available_item; // state
-	reg [`kNumItems-1:0] o_output_item; // state
-	reg [`kReturnCoins-1:0] o_return_coin; // state
-	reg [`kTotalBits-1:0] o_current_total; // state
-
-
-	// buffers
-	reg [`kNumItems-1:0] o_available_item_buffer;
-	reg [`kNumItems-1:0] o_output_item_buffer;
-	reg [`kReturnCoins-1:0] o_return_coin_buffer;
-	reg [`kTotalBits-1:0] o_current_total_buffer;
 
 	// Combinational circuit for the next states
 	always @(*) begin
-		// if input coin
-		case (i_input_coin)
-			3'b100: o_current_total_buffer = o_current_total + kkCoinValue[2];
-			3'b010: o_current_total_buffer = o_current_total + kkCoinValue[1];
-			3'b001: o_current_total_buffer = o_current_total + kkCoinValue[0];
-			default: o_current_total_buffer = o_current_total;
-		endcase
-
-		// case if the selected item is soldable
-		case (o_available_item & i_select_item)
-			4'b1000: {o_output_item_buffer, o_current_total_buffer} = {i_select_item, o_current_total - kkItemPrice[3]};
-			4'b0100: {o_output_item_buffer, o_current_total_buffer} = {i_select_item, o_current_total - kkItemPrice[2]};
-			4'b0010: {o_output_item_buffer, o_current_total_buffer} = {i_select_item, o_current_total - kkItemPrice[1]};
-			4'b0001: {o_output_item_buffer, o_current_total_buffer} = {i_select_item, o_current_total - kkItemPrice[0]};
-			default: o_output_item_buffer = 0;
-		endcase
-
-		// available item
-		o_available_item_buffer = (o_current_total_buffer >= kkItemPrice[3]) ? 4'b1111 :
-								  (o_current_total_buffer >= kkItemPrice[2]) ? 4'b0111 :
-								  (o_current_total_buffer >= kkItemPrice[1]) ? 4'b0011 :
-								  (o_current_total_buffer >= kkItemPrice[0]) ? 4'b0001 :
-								  0;
-
-		// when return triggered
-		if (i_trigger_return) begin
-			o_return_coin_buffer = 0; // return coin initialize
-			while (o_current_total_buffer) begin
-				if (o_current_total_buffer >= kkCoinValue[2])
-					o_current_total_buffer = o_current_total_buffer - kkCoinValue[2];
-				else if (o_current_total_buffer >= kkCoinValue[1])
-					o_current_total_buffer = o_current_total_buffer - kkCoinValue[1];
-				else o_current_total_buffer = o_current_total_buffer - kkCoinValue[0];
-				o_return_coin_buffer = o_return_coin_buffer + 1;
-			end
-			o_available_item_buffer = 0;
-		end
+		;
 	end
-
 	// Combinational circuit for the output
 	always @(*) begin
-		;// state directly goes to output
+		o_available_item = (current_total >= kkItemPrice[3]) ? 4'b1111 :
+							(current_total >= kkItemPrice[2]) ? 4'b0111 :
+							(current_total >= kkItemPrice[1]) ? 4'b0011 :
+							(current_total >= kkItemPrice[0]) ? 4'b0001 :
+							0;
+		o_output_item = selected_item;
+		o_return_coin = (return_triggered) ? num_coins[0] + num_coins[1] +num_coins[2] : 0;
+		o_current_total = current_total;
 	end
 
 
 	// Sequential circuit to reset or update the states
 	always @(posedge clk) begin
 		if (!reset_n) begin
-			o_available_item <= 0;
-			o_output_item <= 0;
-			o_return_coin <= 0;
-			o_current_total <= 0;
-		end
+			// reset all states.
+			current_total <= 0;
+			return_triggered <= 0;
+			selected_item <= 0;
+			num_coins[0] <= 0;
+			num_coins[1] <= 0;
+			num_coins[2] <= 0;
+ 		end
 		else begin
-			o_available_item <= o_available_item_buffer;
-			o_output_item <= o_output_item_buffer;
-			o_return_coin <= o_return_coin_buffer;
-			o_current_total <= o_current_total_buffer;
+			if (i_input_coin) begin
+				case (i_input_coin)
+					3'b100: begin
+						num_coins[2] <= num_coins[2] + 1;
+						current_total <= current_total + kkCoinValue[2];
+					end
+					3'b010: begin
+						current_total <= current_total + kkCoinValue[1];
+						if (num_coins[1]) begin
+							num_coins[2] <= num_coins[2] + 1;
+							num_coins[1] <= 0;
+						end
+						else num_coins[1] <= 1;
+					end
+					3'b001: begin
+						current_total <= current_total + kkCoinValue[0];
+						if (num_coins[0] == 4) begin
+							num_coins[0] <= 0;
+							if (num_coins[1]) begin
+								num_coins[2] <= num_coins[2] + 1;
+								num_coins[1] <= 0;
+							end
+							else num_coins[1] <= 1;
+						end
+						else num_coins[0] <= num_coins[0] + 1;
+					end
+				endcase
+				return_triggered <= 0;
+				selected_item <= 0;
+			end
+			else if (i_select_item) begin
+				case (i_select_item)
+					4'b1000: begin
+						if (current_total >= kkItemPrice[3]) begin
+							current_total <= current_total - kkItemPrice[3];
+							return_triggered <= 0;
+							selected_item <= 4'b1000;
+							num_coins[2] <= num_coins[2] - 2;
+						end
+						else begin
+							return_triggered <= 0;
+							selected_item <= 0;
+						end
+					end
+					4'b0100: begin
+						if (current_total >= kkItemPrice[2]) begin
+							current_total <= current_total - kkItemPrice[2];
+							return_triggered <= 0;
+							selected_item <= 4'b0100;
+							num_coins[2] <= num_coins[2] - 1;
+						end
+						else begin
+							return_triggered <= 0;
+							selected_item <= 0;
+						end
+					end
+					4'b0010: begin
+						if (current_total >= kkItemPrice[1]) begin
+							current_total <= current_total - kkItemPrice[1];
+							return_triggered <= 0;
+							selected_item <= 4'b0010;
+							if (num_coins[1]) num_coins[1] <= 0;
+							else begin
+								num_coins[2] <= num_coins[2] - 1;
+								num_coins[1] <= 1;
+							end
+						end
+						else begin
+							return_triggered <= 0;
+							selected_item <= 0;
+						end
+					end
+					4'b0001: begin
+						if (current_total >= kkItemPrice[0]) begin
+							current_total <= current_total - kkItemPrice[0];
+							return_triggered <= 0;
+							selected_item <= 4'b0001;
+							if (num_coins[0] == 4) num_coins[0] <= 0;
+							else if (num_coins[1]) begin
+								num_coins[1] <= 0;
+								num_coins[0] <= num_coins[0] + 1;
+							end
+							else begin
+								num_coins[2] <= num_coins[2] - 1;
+								num_coins[1] <= 1;
+								num_coins[0] <= num_coins[0] + 1;
+							end
+						end
+						else begin
+							return_triggered <= 0;
+							selected_item <= 0;
+						end
+					end
+				endcase
+			end
+			else if (i_trigger_return) begin
+				current_total <= 0;
+				return_triggered <= 1;
+				selected_item <= 0;
+			end
 		end
 	end
 
