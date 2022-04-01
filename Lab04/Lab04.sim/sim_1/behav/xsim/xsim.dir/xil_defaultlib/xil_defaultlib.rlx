@@ -1,0 +1,13 @@
+0.7
+2020.2
+Nov 18 2020
+09:47:47
+C:/Users/f16ju/COD/Lab04/Lab04.sim/sim_1/behav/xsim/glbl.v,1605673889,verilog,,,,glbl,,,,,,,,
+C:/Users/f16ju/COD/Lab04/Lab04.srcs/sim_1/imports/Lab4/cpu_evaluation_tb.v,1648481746,verilog,,,,tb_cpu,,,,,,,,
+C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/imports/Lab4/cpu.v,1648742677,verilog,,C:/Users/f16ju/COD/Lab04/Lab04.srcs/sim_1/imports/Lab4/cpu_evaluation_tb.v,C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/imports/Lab4/opcodes.v,cpu,,,,,,,,
+C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/imports/Lab4/opcodes.v,1648736067,verilog,,,,,,,,,,,,
+C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/imports/f16ju/COD/Lab02/Lab02-2/Lab02-2.srcs/sources_1/new/RF.v,1647721184,verilog,,C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/imports/Lab4/cpu.v,,RF,,,,,,,,
+C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/imports/f16ju/Lab01_ALU/Lab01_ALU.srcs/sources_1/new/ALU.v,1646881297,verilog,,C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/new/Control.v,,ALU,,,,,,,,
+C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/new/Control.v,1648741667,verilog,,C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/new/Datapath.v,,Control,,,,,,,,
+C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/new/Datapath.v,1648775829,verilog,,C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/new/PC.v,,Datapath,,,,,,,,
+C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/new/PC.v,1648653276,verilog,,C:/Users/f16ju/COD/Lab04/Lab04.srcs/sources_1/imports/f16ju/COD/Lab02/Lab02-2/Lab02-2.srcs/sources_1/new/RF.v,,PC,,,,,,,,

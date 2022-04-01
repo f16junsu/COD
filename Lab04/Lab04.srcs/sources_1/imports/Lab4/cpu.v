@@ -20,12 +20,25 @@ module cpu (
   input clk,                          // clock signal
 
   // for debuging/testing purpose
-  output [`WORD_SIZE-1:0] num_inst,   // number of instruction during execution
-  output [`WORD_SIZE-1:0] output_port // this will be used for a "WWD" instruction
+  output reg [`WORD_SIZE-1:0] num_inst,   // number of instruction during execution
+  output reg [`WORD_SIZE-1:0] output_port // this will be used for a "WWD" instruction
 );
-
-
   // ... fill in the rest of the code
+    wire isJump, regDest, writeReg, isItype, enableOutput;
+    wire [`WORD_SIZE-1:0] instruction;
+    wire [3:0] aluControl;
 
+    Datapath datapath (isJump, regDest, writeReg, isItype, enableOutput, aluControl, instruction,
+                       readM, address, data, inputReady, reset_n, clk);
+    Control control (instruction, isJump, regDest, writereg, isItype, enableOutput, aluControl);
+
+    always @(posedge clk) begin
+        if (!reset_n) begin
+          num_inst <= 0;
+        end
+        else begin
+          num_inst <= num_inst + 1;
+        end
+    end
 endmodule
 //////////////////////////////////////////////////////////////////////////

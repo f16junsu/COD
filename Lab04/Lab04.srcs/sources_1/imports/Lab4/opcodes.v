@@ -6,6 +6,7 @@
 `define FUNC_TCP 6'd5
 `define FUNC_SHL 6'd6
 `define FUNC_SHR 6'd7
+`define FUNC_WWD 6'd28
 
 `define OPCODE_ADI 4'd4
 `define OPCODE_ORI 4'd5
