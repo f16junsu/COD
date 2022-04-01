@@ -7,7 +7,6 @@ module PC (
   input [`WORD_SIZE-1:0] nextPC,
   input reset_n,
   input clk,
-
   output reg [`WORD_SIZE-1:0] currentPC
 );
   always @(posedge clk) begin
