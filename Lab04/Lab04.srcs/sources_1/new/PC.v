@@ -10,7 +10,7 @@ module PC (
   output reg [`WORD_SIZE-1:0] currentPC
 );
   always @(posedge clk or negedge reset_n) begin
-    if (!reset_n) currentPC <= 0;
+    if (!reset_n) currentPC <= -1;
     else currentPC <= nextPC;
   end
 endmodule

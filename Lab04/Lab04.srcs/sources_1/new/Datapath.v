@@ -79,9 +79,6 @@ module Datapath (
       end
       else begin
         readM <= 1;
-        //$display("%b, %b, %b, %b, %b, %b", isLHI, isJump, regDest, writeReg, isItype, enableOutput);
-        $display("%b", instruction);
-        // $display("%h", RF_read_result1);
       end
     end
 
