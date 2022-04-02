@@ -1,6 +1,6 @@
 // Control module
 
-// `include "opcodes.v"   
+// `include "opcodes.v"
 `define OPCODE_RTYPE 4'd15
 `define WORD_SIZE 16
 //ALU opcodes
@@ -49,6 +49,7 @@
 module Control (
   input [`WORD_SIZE-1:0] instruction,
 
+  output isLHI,
   output isJump,
   output regDest,
   output writeReg,
@@ -56,26 +57,27 @@ module Control (
   output enableOutput,
   output reg [3:0] aluControl
 );
-    wire isJump = controlsignal[4];
-    wire regDest = controlsignal[3];
-    wire writeReg = controlsignal[2];
-    wire isItype = controlsignal[1];
-    wire enableOutput = controlsignal[0];
-    reg [4:0] controlsignal;
+    assign isLHI = controlsignal[5];
+    assign isJump = controlsignal[4];
+    assign regDest = controlsignal[3];
+    assign writeReg = controlsignal[2];
+    assign isItype = controlsignal[1];
+    assign enableOutput = controlsignal[0];
+    reg [5:0] controlsignal; // internal register for control signals
 
     always @(*)begin
-    case (instruction[15:12])
-        `OPCODE_RTYPE: begin
-            case (instruction[5:0])
-                `FUNC_ADD: {aluControl, controlsignal} = {`OP_ADD, 5'b01100}; // ADD
-                `FUNC_WWD: {aluControl, controlsignal} = {`DCARE, 5'b0x001}; // WWD
-                default: {aluControl, controlsignal} = {4'bzzzz, 5'bzzzzz};
-            endcase
-            end
-        `OPCODE_ADI: {aluControl, controlsignal} = {`OP_ADD, 5'b00110}; // ADI
-        `OPCODE_LHI: {aluControl, controlsignal} = {`DCARE, 5'b00110}; // LHI
-        `OPCODE_JMP: {aluControl, controlsignal} = {`DCARE, 5'b1x000}; // JMP
-        default: {aluControl, controlsignal} = {4'bzzzz, 5'bzzzzz};
-    endcase
+        case (instruction[15:12])
+            `OPCODE_RTYPE: begin
+                case (instruction[5:0])
+                    `FUNC_ADD: {aluControl, controlsignal} = {`OP_ADD, 6'b001100}; // ADD
+                    `FUNC_WWD: {aluControl, controlsignal} = {`DCARE, 6'b00x001}; // WWD
+                    default: {aluControl, controlsignal} = {4'b0000, 6'b000000};
+                endcase
+                end
+            `OPCODE_ADI: {aluControl, controlsignal} = {`OP_ADD, 6'b000110}; // ADI
+            `OPCODE_LHI: {aluControl, controlsignal} = {`DCARE, 6'b100110}; // LHI
+            `OPCODE_JMP: {aluControl, controlsignal} = {`DCARE, 6'b01x0x0}; // JMP
+            default: {aluControl, controlsignal} = {4'b0000, 6'b000000};
+        endcase
     end
 endmodule

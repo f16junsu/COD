@@ -24,44 +24,43 @@ module ALU(
     input [15:0] B,
     input [3:0] OP,
     input Cin,
-    output [15:0] C,
-    output Cout
+    output reg [15:0] C,
+    output reg Cout
     );
-   
-    reg [15:0] C;
-    reg Cout;
-    
     always @(*) begin
-        Cout = 0;
         case (OP)
             `OP_ADD: {Cout, C} = A + B + Cin;
             `OP_SUB: {Cout, C} = A - (B + Cin);
-            `OP_ID: C = A;
-            `OP_NAND: C = ~(A & B);
-            `OP_NOR: C = ~(A | B);
-            `OP_XNOR: C = A ~^ B;
-            `OP_NOT: C = ~A;
-            `OP_AND: C = A & B;
-            `OP_OR: C = A | B;
-            `OP_XOR: C = A ^ B;
-            `OP_LRS: C = A >> 1;
-            `OP_ARS: 
+            `OP_ID: {Cout, C} = {0, A};
+            `OP_NAND: {Cout, C} = {0, ~(A & B)};
+            `OP_NOR: {Cout, C} = {0, ~(A | B)};
+            `OP_XNOR: {Cout, C} = {0, A ~^ B};
+            `OP_NOT: {Cout, C} = {0, ~A};
+            `OP_AND: {Cout, C} = {0, A & B};
+            `OP_OR: {Cout, C} = {0, A | B};
+            `OP_XOR: {Cout, C} = {0, A ^ B};
+            `OP_LRS: {Cout, C} = {0, A >> 1};
+            `OP_ARS:
                 begin
                     C = A >> 1;
                     C[15] = C[14];
+                    Cout = 0;
                 end
             `OP_RR:
                 begin
                     C = A >> 1;
                     C[15] = A[0];
+                    Cout = 0;
                 end
-            `OP_LLS: C = A << 1;
-            `OP_ALS: C = A <<< 1;
+            `OP_LLS: {Cout, C} = {0, A << 1};
+            `OP_ALS: {Cout, C} = {0, A <<< 1};
             `OP_RL:
                 begin
                     C = A << 1;
                     C[0] = A[15];
+                    Cout = 0;
                 end
+            default: {Cout, C} = 0;
          endcase
      end
 endmodule

@@ -9,7 +9,7 @@ module PC (
   input clk,
   output reg [`WORD_SIZE-1:0] currentPC
 );
-  always @(posedge clk) begin
+  always @(posedge clk or negedge reset_n) begin
     if (!reset_n) currentPC <= 0;
     else currentPC <= nextPC;
   end
