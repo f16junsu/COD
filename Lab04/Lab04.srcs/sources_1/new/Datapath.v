@@ -31,7 +31,7 @@ module Datapath (
     wire [`WORD_SIZE-1:0] RF_read_result1; // wire used to wire rf_unit and alu_unit
     wire [`WORD_SIZE-1:0] RF_read_result2; // wire used to deliver read register2
     wire overflow; // wire used if overflow of alu_unit occurs
-    wire signed [`WORD_SIZE-1:0] sign_extended; // sign_extended LSB 8 bits of instruction
+    wire [`WORD_SIZE-1:0] sign_extended; // sign_extended LSB 8 bits of instruction
     wire [`WORD_SIZE-1:0] alu_source2_muxed; // alu_source2 muxed with RF_read_result2 and sign_extended
     wire [`WORD_SIZE-1:0] write_data_muxed;
 
@@ -39,7 +39,7 @@ module Datapath (
     // wires assignment(combinational logic)
     assign nextPC = isJump ? {address[15:12], instruction[11:0]} : address + 1; // combinational logic for nextPC
     assign write_register_muxed = regDest ? instruction[7:6] : instruction[9:8];
-    assign sign_extended = $signed(instruction[7:0]);
+    assign sign_extended = {{8{instruction[7]}}, instruction[7:0]};
     assign alu_source2_muxed = isItype ? sign_extended : RF_read_result2;
     assign output_port = enableOutput ? RF_read_result1 : 16'bz;
     assign write_data_muxed = isLHI ? {instruction[7:0], 8'b0} : ALU_result;
