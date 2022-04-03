@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // MODULE: CPU for TSC microcomputer: cpu.v
-// Author:
-// Description:
+// Author: 2018-19206 Minjae Kim
+// Description: Lab04 Single-Cycle CPU
 
 // DEFINITIONS
 `define WORD_SIZE 16    // data and address word size

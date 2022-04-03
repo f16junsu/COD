@@ -1,7 +1,6 @@
 // Control module
 
-// `include "opcodes.v"
-`define OPCODE_RTYPE 4'd15
+
 `define WORD_SIZE 16
 //ALU opcodes
 `define	OP_ADD	4'b0000
@@ -24,6 +23,7 @@
 `define	OP_RL	4'b1111
 `define DCARE   4'bxxxx
 
+// OPCODEs and FUNCs
 `define FUNC_ADD 6'd0
 `define FUNC_SUB 6'd1
 `define FUNC_AND 6'd2
@@ -45,6 +45,7 @@
 `define OPCODE_BLZ 4'd3
 `define OPCODE_JMP 4'd9
 `define OPCODE_JAL 4'd10
+`define OPCODE_RTYPE 4'd15 // OPCODE for R-types
 
 module Control (
   input [`WORD_SIZE-1:0] instruction,

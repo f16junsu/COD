@@ -33,11 +33,11 @@ module Datapath (
     wire overflow; // wire used if overflow of alu_unit occurs
     wire [`WORD_SIZE-1:0] sign_extended; // sign_extended LSB 8 bits of instruction
     wire [`WORD_SIZE-1:0] alu_source2_muxed; // alu_source2 muxed with RF_read_result2 and sign_extended
-    wire [`WORD_SIZE-1:0] write_data_muxed;
+    wire [`WORD_SIZE-1:0] write_data_muxed; // write_data muxed with ALU_result and data for LHI intruction
 
 
     // wires assignment(combinational logic)
-    assign nextPC = isJump ? {address[15:12], instruction[11:0]} : address + 1; // combinational logic for nextPC
+    assign nextPC = isJump ? {address[15:12], instruction[11:0]} : address + 1;
     assign write_register_muxed = regDest ? instruction[7:6] : instruction[9:8];
     assign sign_extended = {{8{instruction[7]}}, instruction[7:0]};
     assign alu_source2_muxed = isItype ? sign_extended : RF_read_result2;
