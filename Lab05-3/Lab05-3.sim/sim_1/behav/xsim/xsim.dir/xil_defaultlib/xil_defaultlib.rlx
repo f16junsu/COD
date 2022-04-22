@@ -1,0 +1,17 @@
+0.7
+2020.2
+Nov 18 2020
+09:47:47
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.sim/sim_1/behav/xsim/glbl.v,1605673889,verilog,,,,glbl,,,,,,,,
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sim_1/new/constants.v,1650630254,verilog,,,,,,,,,,,,
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sim_1/new/cpu_tb.v,1650630892,verilog,,,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sim_1/new/constants.v,cpu_tb,,,,,,,,
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/ALU.v,1650630575,verilog,,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/Control.v,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/opcodes.v,ALU,,,,,,,,
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/Control.v,1650630624,verilog,,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/Datapath.v,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/opcodes.v;C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/constants.v,Control,,,,,,,,
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/Datapath.v,1650630123,verilog,,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/PC.v,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/opcodes.v;C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/constants.v,Datapath,,,,,,,,
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/PC.v,1650630156,verilog,,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/RF.v,,PC,,,,,,,,
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/RF.v,1650630170,verilog,,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/ROM.v,,RF,,,,,,,,
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/ROM.v,1650633594,verilog,,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/cpu.v,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/opcodes.v;C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/constants.v,ROM,,,,,,,,
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/constants.v,1650630200,verilog,,,,,,,,,,,,
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/cpu.v,1650630735,verilog,,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/memory.v,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/opcodes.v;C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/constants.v,cpu,,,,,,,,
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/memory.v,1650630396,verilog,,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sim_1/new/cpu_tb.v,C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/constants.v,memory,,,,,,,,
+C:/Users/f16ju/COD/Lab05-3/Lab05-3.srcs/sources_1/new/opcodes.v,1650630557,verilog,,,,,,,,,,,,
