@@ -114,6 +114,10 @@ module Datapath(
     assign data = MemWrite ? muxed_write_data : 16'bz;
     always @(MemWrite) writeM <= MemWrite ? 1 : 0;
 
+    // latching output
+    always @(*) begin
+        output_port <= outputenable ? RF_read_result1 : output_port;
+    end
     // latching registers
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
@@ -122,14 +126,6 @@ module Datapath(
             A <= 0;
             B <= 0;
             ALUout <= 0;
-            output_port <= 16'bz;
-        end
-        else if (outputenable) begin
-            MDR <= received_data;
-            A <= RF_read_result1;
-            B <= RF_read_result2;
-            ALUout <= ALU_result;
-            output_port <= RF_read_result1;
         end
         else if (IRWrite) begin
             IR <= received_data;

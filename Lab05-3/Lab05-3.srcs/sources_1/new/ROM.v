@@ -65,8 +65,7 @@ module ROM(
                             `FUNC_WWD: {control_signals, AluControl, nstate} = {16'b1000000000000000, `OP_ZERO, `STATE_IF};
                             `FUNC_JPR: {control_signals, AluControl, nstate} = {16'b0010000000000001, `OP_ZERO, `STATE_IF};
                             `FUNC_JRL: {control_signals, AluControl, nstate} = {16'b0010000100100001, `OP_ZERO, `STATE_IF};
-                            `FUNC_HLT: {control_signals, AluControl, nstate} = {16'b0000000000000000,
-                            `OP_ZERO, `STATE_ID};
+                            `FUNC_HLT: {control_signals, AluControl, nstate} = {16'b0000000000000000, `OP_ZERO, `STATE_ID};
                             default: {control_signals, AluControl, nstate} = {16'b0000000000000011, `OP_ZERO, `STATE_EX};
                         endcase
                     end
@@ -80,10 +79,10 @@ module ROM(
                     `OPCODE_BEQ: {control_signals, AluControl, nstate} = {16'b0100000000010011, `OP_BEQ, `STATE_IF};
                     `OPCODE_BGZ: {control_signals, AluControl, nstate} = {16'b0100000000010011, `OP_BGZ, `STATE_IF};
                     `OPCODE_BLZ: {control_signals, AluControl, nstate} = {16'b0100000000010011, `OP_BLZ, `STATE_IF};
-                    `OPCODE_RTYPE: {control_signals, AluControl, nstate} = {16'b0000000000010000, opcode[3:0], `STATE_WB};
+                    `OPCODE_RTYPE: {control_signals, AluControl, nstate} = {16'b0000000000010000, funct[3:0], `STATE_WB};
                     `OPCODE_ADI: {control_signals, AluControl, nstate} = {16'b0000000000011000, `OP_ADD, `STATE_WB};
-                    `OPCODE_ORI: {control_signals, AluControl, nstate} = {16'b0000000000011000, `OP_OR, `STATE_WB};
-                    `OPCODE_LHI: {control_signals, AluControl, nstate} = {16'b0000000000000011, `OP_LHI, `STATE_WB};
+                    `OPCODE_ORI: {control_signals, AluControl, nstate} = {16'b0000000000011100, `OP_OR, `STATE_WB};
+                    `OPCODE_LHI: {control_signals, AluControl, nstate} = {16'b0000000000001100, `OP_LHI, `STATE_WB};
                     default: {control_signals, AluControl, nstate} = {16'b0000000000011000, `OP_ADD, `STATE_MEM};
                 endcase
             end
@@ -96,7 +95,8 @@ module ROM(
             `STATE_WB: begin
                 case (opcode)
                     `OPCODE_LWD: {control_signals, AluControl, nstate} = {16'b0000000101100000, `OP_ID, `STATE_IF};
-                    default: {control_signals, AluControl, nstate} = {16'b0000000010100000, `OP_ID, `STATE_IF};
+                    `OPCODE_ADI, `OPCODE_ORI, `OPCODE_LHI: {control_signals, AluControl, nstate} ={16'b0000000000100000, `OP_ID, `STATE_IF};
+                    default: {control_signals, AluControl, nstate} = {16'b0000000010100000, `OP_ID, `STATE_IF}; // R-type
                 endcase
             end
         endcase
