@@ -78,7 +78,7 @@ module ALU(
             end
             `OP_BRAADD: begin
                 Cout = 0;
-                C = A + 1 + B;
+                C = A + B;
                 branch_cond = 0;
             end
             `OP_ID: {Cout, C, branch_cond} = {0, A, 0}; // just for filling
