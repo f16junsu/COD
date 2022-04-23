@@ -43,12 +43,12 @@ module Datapath(
     wire [`WORD_SIZE-1:0] sign_extended_offset;
     wire [`WORD_SIZE-1:0] zero_extended_offset;
     wire [`WORD_SIZE-1:0] nextPC; // PC waiting for latching
-    wire [`WORD_SIZE-1:0] RF_read_result1;
-    wire [`WORD_SIZE-1:0] RF_read_result2;
-    wire [`WORD_SIZE-1:0] ALU_result;
+    wire [`WORD_SIZE-1:0] RF_read_result1; // RF read1 before latched in A
+    wire [`WORD_SIZE-1:0] RF_read_result2; // RF read2 before latched in B
+    wire [`WORD_SIZE-1:0] ALU_result; // ALU_result before latched in ALUout
     wire enablePCLatch;
-    wire branch_cond;
-    wire alu_overflow;
+    wire branch_cond; // wiring between Datapath and Control
+    wire alu_overflow; // just in case for alu overflow
 
     reg [`WORD_SIZE-1:0] received_data;
     reg [`WORD_SIZE-1:0] IR;
@@ -58,7 +58,9 @@ module Datapath(
     reg [`WORD_SIZE-1:0] ALUout;
 
     assign muxed_memory_address = IorD ? ALUout : currentPC;
-    assign muxed_write_dest = RegDest ? IR[7:6] : IR[9:8];
+    assign muxed_write_dest = (RegDest == 2'b00) ? IR[9:8]:
+                              (RegDest == 2'b01) ? IR[7:6]:
+                              2'b10;
     assign muxed_write_data = MemtoReg ? MDR : ALUout;
     assign concat_pcsource = {currentPC[15:12], IR[11:0]};
     assign sign_extended_offset = {{8{IR[7]}}, IR[7:0]};

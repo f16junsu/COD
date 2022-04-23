@@ -14,7 +14,7 @@ module RF(
     output [15:0] data2
     );
 
-    reg [15:0] internal_register[3:0]; // reg [15:0] array length with 4 to save the data
+    reg [15:0] internal_register[0:3]; // reg [15:0] array length with 4 to save the data
     reg [15:0] data1;
     reg [15:0] data2;
 
