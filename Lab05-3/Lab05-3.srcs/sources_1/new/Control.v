@@ -60,7 +60,7 @@ module Control(
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
             uPC <= `STATE_ZERO;
-            num_inst <= 0;
+            num_inst <= -1;
         end
         else begin
             uPC <= nextuPC;

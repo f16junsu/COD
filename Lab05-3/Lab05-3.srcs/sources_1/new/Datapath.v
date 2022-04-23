@@ -127,6 +127,13 @@ module Datapath(
             B <= 0;
             ALUout <= 0;
         end
+        else if (outputenable) begin
+            MDR <= received_data;
+            A <= RF_read_result1;
+            B <= RF_read_result2;
+            ALUout <= ALU_result;
+            output_port <= RF_read_result1;
+        end
         else if (IRWrite) begin
             IR <= received_data;
             MDR <= received_data;

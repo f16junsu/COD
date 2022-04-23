@@ -9,35 +9,35 @@ module cpu_tb();
     wire inputReady;
     reg reset_n; // active-low RESET signal
     reg clk; // clock signal
-    
+
     // for debuging purpose
     wire [`WORD_SIZE-1:0] num_inst; // number of instruction during execution
     wire [`WORD_SIZE-1:0] output_port; // this will be used for a "WWD" instruction
     wire is_halted; // 1 if the cpu is halted
-        
+
     // instantiate the unit under test
     cpu UUT (readM, writeM, address, data, inputReady, reset_n, clk, num_inst, output_port, is_halted);
     memory Mem (readM, writeM, address, data, inputReady);
-    
+
     // initialize inputs
     initial begin
         clk = 0;           // set initial clock value
-        
+
         reset_n = 1;       // generate a LOW pulse for reset_n
         #(`PERIOD1/4) reset_n = 0;
         #`PERIOD1 reset_n = 1;
     end
-    
+
     // generate the clock
     always #(`PERIOD1/2)clk = ~clk;  // generates a clock (period = `PERIOD1)
-    
+
     event testbench_finish;	// This event will finish the testbench.
     initial #(`PERIOD1*10000) -> testbench_finish; // Only 10,000 cycles are allowed.
-    
+
     reg [`TESTID_SIZE*8-1:0] TestID[`NUM_TEST-1:0];
     reg [`WORD_SIZE-1:0] TestNumInst [`NUM_TEST-1:0];
     reg [`WORD_SIZE-1:0] TestAns[`NUM_TEST-1:0];
-    reg TestPassed[`NUM_TEST-1:0];    
+    reg TestPassed[`NUM_TEST-1:0];
     initial begin
         TestID[0] <= "1-1"; TestNumInst[0] <= 16'h0003; TestAns[0] <= 16'h0000; TestPassed[0] <= 1'bx;
         TestID[1] <= "1-2"; TestNumInst[1] <= 16'h0005; TestAns[1] <= 16'h0000; TestPassed[1] <= 1'bx;
@@ -95,12 +95,12 @@ module cpu_tb();
         TestID[53] <= "19-2"; TestNumInst[53] <= 16'h0078; TestAns[53] <= 16'h0001; TestPassed[53] <= 1'bx;
         TestID[54] <= "19-3"; TestNumInst[54] <= 16'h0116; TestAns[54] <= 16'h0008; TestPassed[54] <= 1'bx;
         TestID[55] <= "20"; TestNumInst[55] <= 16'h03d5; TestAns[55] <= 16'h0022; TestPassed[55] <= 1'bx;
-    end           
-    
-    reg [`WORD_SIZE-1:0] i;    
+    end
+
+    reg [`WORD_SIZE-1:0] i;
     reg [`WORD_SIZE-1:0] num_clock;
-    
-    always @ (posedge clk) begin 
+
+    always @ (posedge clk) begin
         if (reset_n == 1) begin
             num_clock = num_clock+1;
             for(i=0; i<`NUM_TEST; i=i+1) begin
@@ -123,14 +123,14 @@ module cpu_tb();
         else begin
             num_clock = 0;
         end
-    end                                            
-    
+    end
+
     reg [`WORD_SIZE-1:0] Passed;
-    
+
     initial begin
         Passed <= 0;
     end
-    
+
     initial @ (testbench_finish)
     begin
         $display("Clock #%d", num_clock);
@@ -138,7 +138,7 @@ module cpu_tb();
         for(i=0; i<`NUM_TEST; i=i+1) begin
             if (TestPassed[i] == 1)
                 Passed = Passed + 1;
-            else                                       
+            else
                 $display("Test #%s : %s", TestID[i], (TestPassed[i] === 0)?"Wrong" : "No Result");
         end
         if (Passed == `NUM_TEST)

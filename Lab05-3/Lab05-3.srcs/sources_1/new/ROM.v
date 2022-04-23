@@ -94,7 +94,7 @@ module ROM(
             end
             `STATE_WB: begin
                 case (opcode)
-                    `OPCODE_LWD: {control_signals, AluControl, nstate} = {16'b0000000101100000, `OP_ID, `STATE_IF};
+                    `OPCODE_LWD: {control_signals, AluControl, nstate} = {16'b0000000001100000, `OP_ID, `STATE_IF};
                     `OPCODE_ADI, `OPCODE_ORI, `OPCODE_LHI: {control_signals, AluControl, nstate} ={16'b0000000000100000, `OP_ID, `STATE_IF};
                     default: {control_signals, AluControl, nstate} = {16'b0000000010100000, `OP_ID, `STATE_IF}; // R-type
                 endcase

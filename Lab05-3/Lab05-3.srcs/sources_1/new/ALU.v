@@ -69,12 +69,12 @@ module ALU(
             `OP_BGZ: begin
                 Cout = 0;
                 C = 0;
-                branch_cond = A > 0;
+                branch_cond = $signed(A) > 0;
             end
             `OP_BLZ: begin
                 Cout = 0;
                 C = 0;
-                branch_cond = A < B;
+                branch_cond = $signed(A) < 0;
             end
             `OP_BRAADD: begin
                 Cout = 0;
