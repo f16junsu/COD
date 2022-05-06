@@ -1,0 +1,20 @@
+0.7
+2020.2
+Nov 18 2020
+09:47:47
+C:/Users/f16ju/COD/Lab_06/Lab_06.sim/sim_1/behav/xsim/glbl.v,1605673889,verilog,,,,glbl,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sim_1/new/cpu_TB.v,1651768094,verilog,,,,cpu_TB,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/ALU.v,1651585596,verilog,,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/BTB.v,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/opcodes.v,ALU,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/BTB.v,1651750887,verilog,,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/Control.v,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/opcodes.v;C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/constants.v,BTB,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/Control.v,1651753817,verilog,,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/Datapath.v,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/opcodes.v;C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/constants.v,Control,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/Datapath.v,1651797108,verilog,,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/EX_MEM_REG.v,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/constants.v;C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/opcodes.v,Datapath,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/EX_MEM_REG.v,1651761711,verilog,,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/ID_EX_REG.v,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/constants.v;C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/opcodes.v,EX_MEM_REG,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/ID_EX_REG.v,1651754099,verilog,,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/IF_ID_REG.v,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/constants.v;C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/opcodes.v,ID_EX_REG,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/IF_ID_REG.v,1651740567,verilog,,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/MEM_WB_REG.v,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/constants.v,IF_ID_REG,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/MEM_WB_REG.v,1651758528,verilog,,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/PC.v,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/constants.v;C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/opcodes.v,MEM_WB_REG,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/PC.v,1651667822,verilog,,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/RF.v,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/constants.v,PC,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/RF.v,1651587908,verilog,,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/cpu.v,,RF,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/constants.v,1651590796,verilog,,,,,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/cpu.v,1651767935,verilog,,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/memory.v,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/opcodes.v,cpu,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/memory.v,1651417417,verilog,,C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sim_1/new/cpu_TB.v,,Memory,,,,,,,,
+C:/Users/f16ju/COD/Lab_06/Lab_06.srcs/sources_1/new/opcodes.v,1651590972,verilog,,,,,,,,,,,,
