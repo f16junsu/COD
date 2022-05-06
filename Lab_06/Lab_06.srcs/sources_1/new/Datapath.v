@@ -6,7 +6,6 @@ module Datapath(
     input reset_n,
 
     // receive signals from Control
-    input isStall,
     input isHLT,
     input use_rs,
     input use_rt,
@@ -19,15 +18,13 @@ module Datapath(
     input MemRead_to_ID_EX,
     input MemWrite_to_ID_EX,
     input [1:0] PCSource_to_ID_EX,
-    input BTBmiss_to_ID_EX,
+    input isBranchorJmp_to_ID_EX,
     // Blue EX Block Register
     input outputenable_to_ID_EX,
     input [1:0] RegDest_to_ID_EX,
     input [3:0] ALUop_to_ID_EX,
     input [1:0] ALUSource_to_ID_EX,
 
-    output should_stall, // signal to control unit
-    output BTBmiss_gen_to_control,
     output [`WORD_SIZE-1:0] instruction,
 
 	// Instruction memory interface
@@ -78,6 +75,8 @@ module Datapath(
     wire [1:0] rw_destination_to_MEM_WB; // register write destination in MEM stage
     wire [`WORD_SIZE-1:0] instruction_to_MEM_WB; // instruction in MEM stage
     wire [`WORD_SIZE-1:0] update_data; // PC source to update BTB
+    wire [`WORD_SIZE-1:0] actual_next_PC; // actual next PC determined in MEM stage
+    wire branch_mispredicted; // usable in MEM
     wire [`WORD_SIZE-1:0] Mem_read_data_from_MEM_WB; // memory data in WB stage
     wire [`WORD_SIZE-1:0] ALU_result_from_MEM_WB; // ALU result in WB stage
     wire [`WORD_SIZE-1:0] RF_read_data2_from_EX_MEM; // Read data2 in MEM stage
@@ -85,11 +84,15 @@ module Datapath(
     wire [`WORD_SIZE-1:0] mem_or_alu_muxed; // muxed from Memory data and ALU result
     wire [`WORD_SIZE-1:0] rw_data; // muxed from mem_or_alu_muxed and PC + 1
     wire [`WORD_SIZE-1:0] PC_plus_1_from_MEM_WB; // PC + 1 in WB stage
-    wire isFlush; // asserted if instruction is not IDLE and PC source is not identical to PC in EX stage
 
-    wire BTBmiss_gen; // usable in IF
-    wire BTBmiss_gen_from_IF_ID; // usable in ID
-    wire should_stall; // usable in ID
+    // wires for hazard
+    wire BTB_forward_PC;
+    wire stall_PC;
+    wire stall_IF_ID;
+    wire flush_IF_ID;
+    wire flush_ID_EX;
+    wire flush_EX_MEM;
+
     wire outputenable; // usable in EX
     wire [1:0] RegDest; // usable in EX
     wire [3:0] ALUop; // usable in EX
@@ -97,7 +100,7 @@ module Datapath(
     wire MemRead; // usable in MEM
     wire MemWrite; // usable in MEM
     wire [1:0] PCSource; // usable in MEM
-    wire BTBmiss; // usable in MEM
+    wire isBranchorJmp; // usable in MEM
     wire branch_cond; // usable in MEM
     wire valid_inst; // usable in WB
     wire MemtoReg; // usable in WB
@@ -109,7 +112,7 @@ module Datapath(
     wire MemRead_to_EX_MEM;
     wire MemWrite_to_EX_MEM;
     wire [1:0] PCSource_to_EX_MEM;
-    wire BTBmiss_to_EX_MEM;
+    wire isBranchorJmp_to_EX_MEM;
     wire valid_inst_to_EX_MEM;
     wire MemtoReg_to_EX_MEM;
     wire RegWrite_to_EX_MEM;
@@ -121,32 +124,45 @@ module Datapath(
     wire RegWrite_to_MEM_WB;
     wire isLink_to_MEM_WB;
 
+    Hazard hazard_unit (.rs_ID(instruction[11:10]),
+                        .rt_ID(instruction[9:8]),
+                        .dest_EX(rw_destination_to_EX_MEM),
+                        .dest_MEM(rw_destination_to_MEM_WB),
+                        .use_rs(use_rs),
+                        .use_rt(use_rt),
+                        .RegWrite_EX(RegWrite_to_EX_MEM),
+                        .RegWrite_MEM(RegWrite_to_MEM_WB),
+                        .branch_mispredicted(branch_mispredicted),
+                        .BTB_forward_PC(BTB_forward_PC),
+                        .stall_PC(stall_PC),
+                        .stall_IF_ID(stall_IF_ID),
+                        .flush_IF_ID(flush_IF_ID),
+                        .flush_ID_EX(flush_ID_EX),
+                        .flush_EX_MEM(flush_EX_MEM));
+
     BTB btb_unit (.clk(clk),
                   .reset_n(reset_n),
-                  .isFlush(isFlush),
-                  .BTBmiss(BTBmiss),
+                  .BTB_forward_PC(BTB_forward_PC),
+                  .BTBupdate(isBranchorJmp),
                   .update_addr(update_addr),
                   .update_data(update_data),
                   .read_addr(currentPC),
-                  .BTBmiss_gen(BTBmiss_gen),
                   .nextPC(nextPC));
 
     PC pc_unit (.clk(clk),
                 .reset_n(reset_n),
-                .isStall(isStall),
+                .isStall(stall_PC),
                 .nextPC(nextPC),
                 .currentPC(currentPC));
 
     IF_ID_REG if_id_reg_unit (.clk(clk),
                               .reset_n(reset_n),
-                              .isStall(isStall),
-                              .isFlush(isFlush),
+                              .isStall(stall_IF_ID),
+                              .isFlush(flush_IF_ID),
                               .in_PC(currentPC),
                               .in_instruction(i_data),
-                              .in_BTBmiss_gen(BTBmiss_gen),
                               .out_PC(PC_to_ID_EX),
-                              .out_instruction(instruction),
-                              .out_BTBmiss_gen(BTBmiss_gen_from_IF_ID));
+                              .out_instruction(instruction));
 
     RF rf_unit (.addr1(instruction[11:10]),
                 .addr2(instruction[9:8]),
@@ -160,7 +176,7 @@ module Datapath(
 
     ID_EX_REG id_ex_reg_unit (.clk(clk),
                               .reset_n(reset_n),
-                              .isFlush(isFlush),
+                              .isFlush(flush_ID_EX),
                               .in_valid_inst(valid_inst_to_ID_EX),
                               .in_MemtoReg(MemtoReg_to_ID_EX),
                               .in_RegWrite(RegWrite_to_ID_EX),
@@ -172,11 +188,11 @@ module Datapath(
                               .in_MemRead(MemRead_to_ID_EX),
                               .in_MemWrite(MemWrite_to_ID_EX),
                               .in_PCSource(PCSource_to_ID_EX),
-                              .in_BTBmiss(BTBmiss_to_ID_EX),
+                              .in_isBranchorJmp(isBranchorJmp_to_ID_EX),
                               .out_MemRead(MemRead_to_EX_MEM),
                               .out_MemWrite(MemWrite_to_EX_MEM),
                               .out_PCSource(PCSource_to_EX_MEM),
-                              .out_BTBmiss(BTBmiss_to_EX_MEM),
+                              .out_isBranchorJmp(isBranchorJmp_to_EX_MEM),
                               .in_outputenable(outputenable_to_ID_EX),
                               .in_RegDest(RegDest_to_ID_EX),
                               .in_ALUop(ALUop_to_ID_EX),
@@ -204,7 +220,7 @@ module Datapath(
 
     EX_MEM_REG ex_mem_reg_unit (.clk(clk),
                                 .reset_n(reset_n),
-                                .isFlush(isFlush),
+                                .isFlush(flush_EX_MEM),
                                 .in_valid_inst(valid_inst_to_EX_MEM),
                                 .in_MemtoReg(MemtoReg_to_EX_MEM),
                                 .in_RegWrite(RegWrite_to_EX_MEM),
@@ -216,11 +232,11 @@ module Datapath(
                                 .in_MemRead(MemRead_to_EX_MEM),
                                 .in_MemWrite(MemWrite_to_EX_MEM),
                                 .in_PCSource(PCSource_to_EX_MEM),
-                                .in_BTBmiss(BTBmiss_to_EX_MEM),
+                                .in_isBranchorJmp(isBranchorJmp_to_EX_MEM),
                                 .out_MemRead(MemRead),
                                 .out_MemWrite(MemWrite),
                                 .out_PCSource(PCSource),
-                                .out_BTBmiss(BTBmiss),
+                                .out_isBranchorJmp(isBranchorJmp),
                                 .in_instruction(instruction_to_EX_MEM),
                                 .in_PC_plus_1(PC_plus_1),
                                 .in_branch_target(PC_branch_target),
@@ -259,23 +275,6 @@ module Datapath(
                                 .out_PC_plus_1(PC_plus_1_from_MEM_WB),
                                 .out_RFwrite_destination(rw_destination));
 
-    // stall logic
-    assign should_stall = ((instruction[11:10] == rw_destination_to_EX_MEM) &&
-                           use_rs && RegWrite_to_EX_MEM) |
-                          ((instruction[11:10] == rw_destination_to_MEM_WB) &&
-                           use_rs && RegWrite_to_MEM_WB) |
-                          ((instruction[11:10] == rw_destination) &&
-                           use_rs && RegWrite) |
-                          ((instruction[9:8] == rw_destination_to_EX_MEM) &&
-                           use_rt && RegWrite_to_EX_MEM) |
-                          ((instruction[9:8] == rw_destination_to_MEM_WB) &&
-                           use_rt && RegWrite_to_MEM_WB) |
-                          ((instruction[9:8] == rw_destination) &&
-                           use_rt && RegWrite);
-    // flush logic
-    assign isFlush = (instruction_to_MEM_WB == `IDLE) ? 0:
-                     (update_data != PC_from_ID_EX) ? 1:
-                     0;
 
     // wire assignment
     assign i_readM = 1;
@@ -287,14 +286,13 @@ module Datapath(
     assign d_data = MemWrite ? RF_read_data2_from_EX_MEM : 16'bz;
     assign output_port = outputenable ? RF_read_data1_from_ID_EX : 16'bz;
     assign is_halted = isHLT;
-    assign BTBmiss_gen_to_control = BTBmiss_gen_from_IF_ID;
 
     assign PC_plus_1 = PC_from_ID_EX + 1;
     assign PC_branch_target = PC_from_ID_EX + 1 + sign_extended_imm;
     assign PC_j_target = {PC_from_ID_EX[15:12], instruction_to_EX_MEM[11:0]};
     assign PC_jr_target = RF_read_data1_from_ID_EX;
-    assign ALU_SourceB = (ALUSource == 2'b00) ? RF_read_data1_from_ID_EX :
-                         (ALUSource == 2'b01) ? sign_extended_imm :
+    assign ALU_SourceB = (ALUSource == 2'b00) ? RF_read_data1_from_ID_EX:
+                         (ALUSource == 2'b01) ? sign_extended_imm:
                          zero_extended_imm;
     assign sign_extended_imm = {{8{instruction_to_EX_MEM[7]}}, instruction_to_EX_MEM[7:0]};
     assign zero_extended_imm = {{8{0}}, instruction_to_EX_MEM[7:0]};
@@ -303,10 +301,14 @@ module Datapath(
                                       2'b10;
     assign muxed_with_branch_cond = branch_cond ? PC_branch_target_from_EX_MEM :
                                     PC_plus_1_from_EX_MEM;
-    assign update_data = (PCSource == 2'b00) ? muxed_with_branch_cond:
+    assign update_data = (PCSource == 2'b00) ? PC_branch_target_from_EX_MEM:
                          (PCSource == 2'b01) ? PC_j_target_from_EX_MEM:
                          PC_jr_target_from_EX_MEM;
+    assign actual_next_PC = (PCSource == 2'b00) ? muxed_with_branch_cond:
+                            (PCSource == 2'b01) ? PC_j_target_from_EX_MEM:
+                            PC_jr_target_from_EX_MEM;
     assign update_addr = PC_plus_1_from_EX_MEM - 1;
+    assign branch_mispredicted = isBranchorJmp & (actual_next_PC != PC_from_ID_EX);
     assign mem_or_alu_muxed = MemtoReg ? Mem_read_data_from_MEM_WB : ALU_result_from_MEM_WB;
     assign rw_data = isLink ? PC_plus_1_from_MEM_WB : mem_or_alu_muxed;
 

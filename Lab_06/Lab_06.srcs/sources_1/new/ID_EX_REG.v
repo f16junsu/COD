@@ -20,11 +20,11 @@ module ID_EX_REG(
     input in_MemRead,
     input in_MemWrite,
     input [1:0] in_PCSource,
-    input in_BTBmiss,
+    input in_isBranchorJmp,
     output reg out_MemRead,
     output reg out_MemWrite,
     output reg [1:0] out_PCSource,
-    output reg out_BTBmiss,
+    output reg out_isBranchorJmp,
 
     // Blue EX Block Register
     input in_outputenable,
@@ -54,7 +54,7 @@ module ID_EX_REG(
             out_MemRead <= 0;
             out_MemWrite <= 0;
             out_PCSource <= 2'b00;
-            out_BTBmiss <= 0;
+            out_isBranchorJmp <= 0;
             out_outputenable <= 0;
             out_RegDest <= 2'b00;
             out_ALUop <= `OP_ID;
@@ -72,7 +72,7 @@ module ID_EX_REG(
             out_MemRead <= 0;
             out_MemWrite <= 0;
             out_PCSource <= 2'b00;
-            out_BTBmiss <= 0;
+            out_isBranchorJmp <= 0;
             out_outputenable <= 0;
             out_RegDest <= 2'b00;
             out_ALUop <= `OP_ID;
@@ -90,7 +90,7 @@ module ID_EX_REG(
             out_MemRead <= in_MemRead;
             out_MemWrite <= in_MemWrite;
             out_PCSource <= in_PCSource;
-            out_BTBmiss <= in_BTBmiss;
+            out_isBranchorJmp <= in_isBranchorJmp;
             out_outputenable <= in_outputenable;
             out_RegDest <= in_RegDest;
             out_ALUop <= in_ALUop;

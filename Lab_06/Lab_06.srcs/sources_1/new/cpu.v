@@ -23,7 +23,6 @@ module cpu(
         output [`WORD_SIZE-1:0] output_port,
         output is_halted
 );
-        wire isStall;
         wire isHLT;
         wire use_rs;
         wire use_rt;
@@ -34,20 +33,15 @@ module cpu(
         wire MemRead_to_ID_EX;
         wire MemWrite_to_ID_EX;
         wire [1:0] PCSource_to_ID_EX;
-        wire BTBmiss_to_ID_EX;
+        wire isBranchorJmp_to_ID_EX;
         wire outputenable_to_ID_EX;
         wire [1:0] RegDest_to_ID_EX;
         wire [3:0] ALUop_to_ID_EX;
         wire [1:0] ALUSource_to_ID_EX;
 
-        wire should_stall;
-        wire BTBmiss_gen_to_control;
         wire [`WORD_SIZE-1:0] instruction;
 
-        Control control_unit (.BTBmiss_gen(BTBmiss_gen_to_control),
-                              .should_stall(should_stall),
-                              .instruction(instruction),
-                              .isStall(isStall),
+        Control control_unit (.instruction(instruction),
                               .isHLT(isHLT),
                               .use_rs(use_rs),
                               .use_rt(use_rt),
@@ -58,7 +52,7 @@ module cpu(
                               .MemRead(MemRead_to_ID_EX),
                               .MemWrite(MemWrite_to_ID_EX),
                               .PCSource(PCSource_to_ID_EX),
-                              .BTBmiss(BTBmiss_to_ID_EX),
+                              .isBranchorJmp(isBranchorJmp_to_ID_EX),
                               .outputenable(outputenable_to_ID_EX),
                               .RegDest(RegDest_to_ID_EX),
                               .ALUop(ALUop_to_ID_EX),
@@ -66,7 +60,6 @@ module cpu(
 
         Datapath datapath_unit (.clk(Clk),
                                 .reset_n(Reset_N),
-                                .isStall(isStall),
                                 .isHLT(isHLT),
                                 .use_rs(use_rs),
                                 .use_rt(use_rt),
@@ -77,13 +70,11 @@ module cpu(
                                 .MemRead_to_ID_EX(MemRead_to_ID_EX),
                                 .MemWrite_to_ID_EX(MemWrite_to_ID_EX),
                                 .PCSource_to_ID_EX(PCSource_to_ID_EX),
-                                .BTBmiss_to_ID_EX(BTBmiss_to_ID_EX),
+                                .isBranchorJmp_to_ID_EX(isBranchorJmp_to_ID_EX),
                                 .outputenable_to_ID_EX(outputenable_to_ID_EX),
                                 .RegDest_to_ID_EX(RegDest_to_ID_EX),
                                 .ALUop_to_ID_EX(ALUop_to_ID_EX),
                                 .ALUSource_to_ID_EX(ALUSource_to_ID_EX),
-                                .should_stall(should_stall),
-                                .BTBmiss_gen_to_control(BTBmiss_gen_to_control),
                                 .instruction(instruction),
                                 .i_readM(i_readM),
                                 .i_writeM(i_writeM),

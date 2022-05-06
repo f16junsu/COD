@@ -20,11 +20,11 @@ module EX_MEM_REG(
     input in_MemRead,
     input in_MemWrite,
     input [1:0] in_PCSource,
-    input in_BTBmiss,
+    input in_isBranchorJmp,
     output reg out_MemRead,
     output reg out_MemWrite,
     output reg [1:0] out_PCSource,
-    output reg out_BTBmiss,
+    output reg out_isBranchorJmp,
 
     input [`WORD_SIZE-1:0] in_instruction,
     input [`WORD_SIZE-1:0] in_PC_plus_1,
@@ -54,9 +54,9 @@ module EX_MEM_REG(
             out_MemRead <= 0;
             out_MemWrite <= 0;
             out_PCSource <= 2'b00;
-            out_BTBmiss <= 0;
+            out_isBranchorJmp <= 0;
             out_instruction <= `IDLE;
-            out_PC_plus_1 <= 1;
+            out_PC_plus_1 <= 0;
             out_branch_target <= 0;
             out_J_target <= 0;
             out_JR_target <= 0;
@@ -73,9 +73,9 @@ module EX_MEM_REG(
             out_MemRead <= 0;
             out_MemWrite <= 0;
             out_PCSource <= 2'b00;
-            out_BTBmiss <= 0;
+            out_isBranchorJmp <= 0;
             out_instruction <= `IDLE;
-            out_PC_plus_1 <= 1;
+            out_PC_plus_1 <= 0;
             out_branch_target <= 0;
             out_J_target <= 0;
             out_JR_target <= 0;
@@ -92,7 +92,7 @@ module EX_MEM_REG(
             out_MemRead <= in_MemRead;
             out_MemWrite <= in_MemWrite;
             out_PCSource <= in_PCSource;
-            out_BTBmiss <= in_BTBmiss;
+            out_isBranchorJmp <= in_isBranchorJmp;
             out_instruction <= in_instruction;
             out_PC_plus_1 <= in_PC_plus_1;
             out_branch_target <= in_branch_target;
