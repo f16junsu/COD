@@ -4,6 +4,7 @@ module IF_ID_REG(
     input clk,
     input reset_n,
     input isStall,
+    input isFlush,
 
     input [`WORD_SIZE-1:0] in_PC,
     input [`WORD_SIZE-1:0] in_instruction,
@@ -15,6 +16,11 @@ module IF_ID_REG(
 );
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
+            out_PC <= `IDLE; // have to substitute to IDLE address
+            out_instruction <= `IDLE; // IDLE instruction
+            out_BTBmiss_gen <= 0;
+        end
+        else if (isFlush) begin
             out_PC <= `IDLE; // have to substitute to IDLE address
             out_instruction <= `IDLE; // IDLE instruction
             out_BTBmiss_gen <= 0;

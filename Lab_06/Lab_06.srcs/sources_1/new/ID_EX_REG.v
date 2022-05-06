@@ -4,6 +4,7 @@
 module ID_EX_REG(
     input clk,
     input reset_n,
+    input isFlush,
 
     // Blue WB Block Register
     input in_valid_inst,
@@ -46,6 +47,24 @@ module ID_EX_REG(
 );
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
+            out_valid_inst <= 0;
+            out_MemtoReg <= 0;
+            out_RegWrite <= 0;
+            out_isLink <= 0;
+            out_MemRead <= 0;
+            out_MemWrite <= 0;
+            out_PCSource <= 2'b00;
+            out_BTBmiss <= 0;
+            out_outputenable <= 0;
+            out_RegDest <= 2'b00;
+            out_ALUop <= `OP_ID;
+            out_ALUSource <= 2'b00;
+            out_PC <= 0;
+            out_instruction <= `IDLE;
+            out_RF_read_data1 <= 0;
+            out_RF_read_data2 <= 0;
+        end
+        else if (isFlush) begin
             out_valid_inst <= 0;
             out_MemtoReg <= 0;
             out_RegWrite <= 0;
