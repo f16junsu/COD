@@ -16,7 +16,7 @@ module BTB(
     output BTBmiss_gen,
     output [`WORD_SIZE-1:0] nextPC
     );
-    reg [`WORD_SIZE:0] BTB_table [0:`MEMORY_SIZE-1]; // {valid_bit, word}
+    reg [`WORD_SIZE:0] BTB_table [0:255]; // {valid_bit, word}
     integer c;
 
     assign BTBmiss_gen = !(BTB_table[read_addr][`WORD_SIZE]);
@@ -24,9 +24,10 @@ module BTB(
                     BTB_table[read_addr][`WORD_SIZE] ? BTB_table[read_addr][`WORD_SIZE-1:0]:
                     read_addr + 1;
 
+
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
-            for (c=0; c < `MEMORY_SIZE; c = c + 1) begin
+            for (c=0; c < 256; c = c + 1) begin
                 BTB_table[c] <= 0;
             end
         end

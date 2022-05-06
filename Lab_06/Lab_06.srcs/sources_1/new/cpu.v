@@ -42,7 +42,7 @@ module cpu(
 
         wire should_stall;
         wire BTBmiss_gen_to_control;
-        wire instruction;
+        wire [`WORD_SIZE-1:0] instruction;
 
         Control control_unit (.BTBmiss_gen(BTBmiss_gen_to_control),
                               .should_stall(should_stall),

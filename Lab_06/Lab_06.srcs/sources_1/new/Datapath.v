@@ -280,7 +280,7 @@ module Datapath(
     assign i_address = currentPC;
     assign d_readM = MemRead;
     assign d_writeM = MemWrite;
-    assign i_address = ALU_result_from_EX_MEM;
+    assign d_address = ALU_result_from_EX_MEM;
     assign d_data = MemWrite ? RF_read_data2_from_EX_MEM : 16'bz;
     assign output_port = outputenable ? RF_read_data1_from_ID_EX : 16'bz;
     assign is_halted = isHLT;
