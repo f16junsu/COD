@@ -40,7 +40,7 @@ module Datapath(
     inout [`WORD_SIZE-1:0] d_data,
 
     output reg [`WORD_SIZE-1:0] num_inst,
-    output [`WORD_SIZE-1:0] output_port,
+    output reg [`WORD_SIZE-1:0] output_port,
     output is_halted
     );
     wire [`WORD_SIZE-1:0] nextPC; // PC from BTB
@@ -284,7 +284,7 @@ module Datapath(
     assign d_writeM = MemWrite;
     assign d_address = ALU_result_from_EX_MEM;
     assign d_data = MemWrite ? RF_read_data2_from_EX_MEM : 16'bz;
-    assign output_port = outputenable ? RF_read_data1_from_ID_EX : 16'bz;
+    // assign output_port = outputenable ? RF_read_data1_from_ID_EX : 16'bz;
     assign is_halted = isHLT;
 
     assign PC_plus_1 = PC_from_ID_EX + 1;
@@ -312,6 +312,10 @@ module Datapath(
     assign mem_or_alu_muxed = MemtoReg ? Mem_read_data_from_MEM_WB : ALU_result_from_MEM_WB;
     assign rw_data = isLink ? PC_plus_1_from_MEM_WB : mem_or_alu_muxed;
 
+    // output port
+    always @(posedge outputenable) begin
+        output_port <= RF_read_data1_from_ID_EX;
+    end
     // num_inst count
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
