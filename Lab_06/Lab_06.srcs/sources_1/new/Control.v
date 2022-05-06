@@ -165,7 +165,7 @@ module Control(
                 PCSource = 2'b00;
                 isBranchorJmp = 0;
                 outputenable = 0;
-                RegDest = 2'b01;
+                RegDest = 2'b00;
                 ALUop = `OP_ADD;
                 ALUSource = 2'b01;
             end
@@ -182,7 +182,7 @@ module Control(
                 PCSource = 2'b00;
                 isBranchorJmp = 0;
                 outputenable = 0;
-                RegDest = 2'b01;
+                RegDest = 2'b00;
                 ALUop = `OP_OR;
                 ALUSource = 2'b10;
             end
@@ -199,14 +199,14 @@ module Control(
                 PCSource = 2'b00;
                 isBranchorJmp = 0;
                 outputenable = 0;
-                RegDest = 2'b01;
+                RegDest = 2'b00;
                 ALUop = `OP_LHI;
                 ALUSource = 2'b00;
             end
             `OPCODE_LWD: begin
                 isHLT = 0;
                 use_rs = 1;
-                use_rt = 0;
+                use_rt = 1;
                 valid_inst = 1;
                 MemtoReg = 1;
                 RegWrite = 1;
@@ -223,7 +223,7 @@ module Control(
             `OPCODE_SWD: begin
                 isHLT = 0;
                 use_rs = 1;
-                use_rt = 0;
+                use_rt = 1;
                 valid_inst = 1;
                 MemtoReg = 0;
                 RegWrite = 0;
@@ -274,7 +274,7 @@ module Control(
             `OPCODE_BGZ: begin
                 isHLT = 0;
                 use_rs = 1;
-                use_rt = 1;
+                use_rt = 0;
                 valid_inst = 1;
                 MemtoReg = 0;
                 RegWrite = 0;
@@ -291,7 +291,7 @@ module Control(
             `OPCODE_BLZ: begin
                 isHLT = 0;
                 use_rs = 1;
-                use_rt = 1;
+                use_rt = 0;
                 valid_inst = 1;
                 MemtoReg = 0;
                 RegWrite = 0;
