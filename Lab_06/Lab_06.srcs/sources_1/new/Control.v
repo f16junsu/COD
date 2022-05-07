@@ -201,7 +201,7 @@ module Control(
                 outputenable = 0;
                 RegDest = 2'b00;
                 ALUop = `OP_LHI;
-                ALUSource = 2'b00;
+                ALUSource = 2'b01;
             end
             `OPCODE_LWD: begin
                 isHLT = 0;
