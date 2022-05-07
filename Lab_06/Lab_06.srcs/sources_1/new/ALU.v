@@ -1,4 +1,5 @@
 `include "opcodes.v"
+`include "constants.v"
 
 module ALU(
     input [15:0] A,
@@ -42,18 +43,17 @@ module ALU(
             end
             `OP_SHL: begin
                 Cout = 0;
-                C = A << 1;
+                C = {A[`WORD_SIZE-2:0], 1'b0};
                 branch_cond = 0;
             end
             `OP_SHR: begin
                 Cout = 0;
-                C = A >> 1;
-                C[15] = C[14];
+                C = {1'b0, A[`WORD_SIZE-1:1]};
                 branch_cond = 0;
             end
             `OP_LHI: begin
                 Cout = 0;
-                C = C << 8;
+                C = {B[7:0], {8{0}}};
                 branch_cond = 0;
             end
             `OP_BNE: begin
@@ -69,12 +69,12 @@ module ALU(
             `OP_BGZ: begin
                 Cout = 0;
                 C = 0;
-                branch_cond = $signed(A) > 0;
+                branch_cond = $signed(A) > $signed(0);
             end
             `OP_BLZ: begin
                 Cout = 0;
                 C = 0;
-                branch_cond = $signed(A) < 0;
+                branch_cond = $signed(A) < $signed(0);
             end
             `OP_BRAADD: begin
                 Cout = 0;

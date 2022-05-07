@@ -46,8 +46,8 @@ module Hazard(
             BTB_forward_PC = 0;
             stall_PC = 1;
             stall_IF_ID = 1;
-            flush_IF_ID = 1;
-            flush_ID_EX = 0;
+            flush_IF_ID = 0;
+            flush_ID_EX = 1;
             flush_EX_MEM = 0;
         end
         else begin

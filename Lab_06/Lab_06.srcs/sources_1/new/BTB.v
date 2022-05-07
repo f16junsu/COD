@@ -10,6 +10,8 @@ module BTB(
     // input address for update and data(target) for update
     input [`WORD_SIZE-1:0] update_addr,
     input [`WORD_SIZE-1:0] update_data,
+    // actual PC for internal forwarding
+    input [`WORD_SIZE-1:0] actual_next_PC,
     // input address to read table
     input [`WORD_SIZE-1:0] read_addr,
 
@@ -18,7 +20,7 @@ module BTB(
     reg [`WORD_SIZE:0] BTB_table [0:255]; // {valid_bit, word}
     integer c;
 
-    assign nextPC = BTB_forward_PC ? update_data : // internal forwarding next PC
+    assign nextPC = BTB_forward_PC ? actual_next_PC : // internal forwarding next PC
                     BTB_table[read_addr][`WORD_SIZE] ? BTB_table[read_addr][`WORD_SIZE-1:0]:
                     read_addr + 1;
 

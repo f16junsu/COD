@@ -206,7 +206,7 @@ module Control(
             `OPCODE_LWD: begin
                 isHLT = 0;
                 use_rs = 1;
-                use_rt = 1;
+                use_rt = 0;
                 valid_inst = 1;
                 MemtoReg = 1;
                 RegWrite = 1;

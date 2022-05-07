@@ -61,7 +61,6 @@ module Datapath(
     wire [`WORD_SIZE-1:0] ALU_result_to_EX_MEM; // ALU result in EX stage
     wire ALU_overflow; // just in case for ALU overflow
     wire branch_cond_to_EX_MEM; // branch_cond to EX_MEM
-    wire [`WORD_SIZE-1:0] RF_read_data2_to_EX_MEM; // Read data2 in EX stage
     wire [`WORD_SIZE-1:0] ALU_SourceB; // ALU SourceB in EX stage
     wire [`WORD_SIZE-1:0] sign_extended_imm; // sign-extend(imm)
     wire [`WORD_SIZE-1:0] zero_extended_imm; // zero-extend(imm)
@@ -79,11 +78,13 @@ module Datapath(
     wire branch_mispredicted; // usable in MEM
     wire [`WORD_SIZE-1:0] Mem_read_data_from_MEM_WB; // memory data in WB stage
     wire [`WORD_SIZE-1:0] ALU_result_from_MEM_WB; // ALU result in WB stage
+    wire [`WORD_SIZE-1:0] RF_read_data1_from_EX_MEM; // Read data1 in MEM stage
     wire [`WORD_SIZE-1:0] RF_read_data2_from_EX_MEM; // Read data2 in MEM stage
     wire [1:0] rw_destination; // register write destination in WB stage
     wire [`WORD_SIZE-1:0] mem_or_alu_muxed; // muxed from Memory data and ALU result
     wire [`WORD_SIZE-1:0] rw_data; // muxed from mem_or_alu_muxed and PC + 1
     wire [`WORD_SIZE-1:0] PC_plus_1_from_MEM_WB; // PC + 1 in WB stage
+    wire [`WORD_SIZE-1:0] RF_read_data1_in_WB; // Read data1 in WB stage
 
     // wires for hazard
     wire BTB_forward_PC;
@@ -93,7 +94,6 @@ module Datapath(
     wire flush_ID_EX;
     wire flush_EX_MEM;
 
-    wire outputenable; // usable in EX
     wire [1:0] RegDest; // usable in EX
     wire [3:0] ALUop; // usable in EX
     wire [1:0] ALUSource; // usable in EX
@@ -106,6 +106,7 @@ module Datapath(
     wire MemtoReg; // usable in WB
     wire RegWrite; // usable in WB
     wire isLink; // usable in WB
+    wire outputenable; // usable in WB
 
 
     // wires to transfer signals from ID_EX to EX_MEM
@@ -117,12 +118,14 @@ module Datapath(
     wire MemtoReg_to_EX_MEM;
     wire RegWrite_to_EX_MEM;
     wire isLink_to_EX_MEM;
+    wire outputenable_to_EX_MEM;
 
     // wires to transfer signals from EX_MEM to MEM_WB
     wire valid_inst_to_MEM_WB;
     wire MemtoReg_to_MEM_WB;
     wire RegWrite_to_MEM_WB;
     wire isLink_to_MEM_WB;
+    wire outputenable_to_MEM_WB;
 
     Hazard hazard_unit (.rs_ID(instruction[11:10]),
                         .rt_ID(instruction[9:8]),
@@ -146,6 +149,7 @@ module Datapath(
                   .BTBupdate(isBranchorJmp),
                   .update_addr(update_addr),
                   .update_data(update_data),
+                  .actual_next_PC(actual_next_PC),
                   .read_addr(currentPC),
                   .nextPC(nextPC));
 
@@ -181,10 +185,12 @@ module Datapath(
                               .in_MemtoReg(MemtoReg_to_ID_EX),
                               .in_RegWrite(RegWrite_to_ID_EX),
                               .in_isLink(isLink_to_ID_EX),
+                              .in_outputenable(outputenable_to_ID_EX),
                               .out_valid_inst(valid_inst_to_EX_MEM),
                               .out_MemtoReg(MemtoReg_to_EX_MEM),
                               .out_RegWrite(RegWrite_to_EX_MEM),
                               .out_isLink(isLink_to_EX_MEM),
+                              .out_outputenable(outputenable_to_EX_MEM),
                               .in_MemRead(MemRead_to_ID_EX),
                               .in_MemWrite(MemWrite_to_ID_EX),
                               .in_PCSource(PCSource_to_ID_EX),
@@ -193,11 +199,9 @@ module Datapath(
                               .out_MemWrite(MemWrite_to_EX_MEM),
                               .out_PCSource(PCSource_to_EX_MEM),
                               .out_isBranchorJmp(isBranchorJmp_to_EX_MEM),
-                              .in_outputenable(outputenable_to_ID_EX),
                               .in_RegDest(RegDest_to_ID_EX),
                               .in_ALUop(ALUop_to_ID_EX),
                               .in_ALUSource(ALUSource_to_ID_EX),
-                              .out_outputenable(outputenable),
                               .out_RegDest(RegDest),
                               .out_ALUop(ALUop),
                               .out_ALUSource(ALUSource),
@@ -225,10 +229,12 @@ module Datapath(
                                 .in_MemtoReg(MemtoReg_to_EX_MEM),
                                 .in_RegWrite(RegWrite_to_EX_MEM),
                                 .in_isLink(isLink_to_EX_MEM),
+                                .in_outputenable(outputenable_to_EX_MEM),
                                 .out_valid_inst(valid_inst_to_MEM_WB),
                                 .out_MemtoReg(MemtoReg_to_MEM_WB),
                                 .out_RegWrite(RegWrite_to_MEM_WB),
                                 .out_isLink(isLink_to_MEM_WB),
+                                .out_outputenable(outputenable_to_MEM_WB),
                                 .in_MemRead(MemRead_to_EX_MEM),
                                 .in_MemWrite(MemWrite_to_EX_MEM),
                                 .in_PCSource(PCSource_to_EX_MEM),
@@ -244,7 +250,8 @@ module Datapath(
                                 .in_JR_target(PC_jr_target),
                                 .in_ALU_result(ALU_result_to_EX_MEM),
                                 .in_RFwrite_destination(rw_destination_to_EX_MEM),
-                                .in_RF_read_data2(RF_read_data2_to_EX_MEM),
+                                .in_RF_read_data1(RF_read_data1_from_ID_EX),
+                                .in_RF_read_data2(RF_read_data2_from_ID_EX),
                                 .in_branch_cond(branch_cond_to_EX_MEM),
                                 .out_instruction(instruction_to_MEM_WB),
                                 .out_PC_plus_1(PC_plus_1_from_EX_MEM),
@@ -253,6 +260,7 @@ module Datapath(
                                 .out_JR_target(PC_jr_target_from_EX_MEM),
                                 .out_ALU_result(ALU_result_from_EX_MEM),
                                 .out_RFwrite_destination(rw_destination_to_MEM_WB),
+                                .out_RF_read_data1(RF_read_data1_from_EX_MEM),
                                 .out_RF_read_data2(RF_read_data2_from_EX_MEM),
                                 .out_branch_cond(branch_cond));
 
@@ -262,17 +270,21 @@ module Datapath(
                                 .in_MemtoReg(MemtoReg_to_MEM_WB),
                                 .in_RegWrite(RegWrite_to_MEM_WB),
                                 .in_isLink(isLink_to_MEM_WB),
+                                .in_outputenable(outputenable_to_MEM_WB),
                                 .out_valid_inst(valid_inst),
                                 .out_MemtoReg(MemtoReg),
                                 .out_RegWrite(RegWrite),
                                 .out_isLink(isLink),
+                                .out_outputenable(outputenable),
                                 .in_Memread_data(d_data),
                                 .in_ALU_result(ALU_result_from_EX_MEM),
                                 .in_PC_plus_1(PC_plus_1_from_EX_MEM),
+                                .in_RF_read_data1(RF_read_data1_from_EX_MEM),
                                 .in_RFwrite_destination(rw_destination_to_MEM_WB),
                                 .out_MemRead_data(Mem_read_data_from_MEM_WB),
                                 .out_ALU_result(ALU_result_from_MEM_WB),
                                 .out_PC_plus_1(PC_plus_1_from_MEM_WB),
+                                .out_RF_read_data1(RF_read_data1_in_WB),
                                 .out_RFwrite_destination(rw_destination));
 
 
@@ -314,7 +326,7 @@ module Datapath(
 
     // output port
     always @(posedge outputenable) begin
-        output_port <= RF_read_data1_from_ID_EX;
+        output_port <= RF_read_data1_in_WB;
     end
     // num_inst count
     always @(posedge clk or negedge reset_n) begin
