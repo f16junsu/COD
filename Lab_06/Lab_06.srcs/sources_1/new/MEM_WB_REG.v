@@ -6,11 +6,13 @@ module MEM_WB_REG(
     input reset_n,
 
     // Blue WB Block Register
+    input in_isHLT,
     input in_valid_inst,
     input in_MemtoReg,
     input in_RegWrite,
     input in_isLink,
     input in_outputenable,
+    output reg out_isHLT,
     output reg out_valid_inst,
     output reg out_MemtoReg,
     output reg out_RegWrite,
@@ -30,6 +32,7 @@ module MEM_WB_REG(
     );
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
+            out_isHLT <= 0;
             out_valid_inst <= 0;
             out_MemtoReg <= 0;
             out_RegWrite <= 0;
@@ -42,6 +45,7 @@ module MEM_WB_REG(
             out_RFwrite_destination <= 0;
         end
         else begin
+            out_isHLT <= in_isHLT;
             out_valid_inst <= in_valid_inst;
             out_MemtoReg <= in_MemtoReg;
             out_RegWrite <= in_RegWrite;

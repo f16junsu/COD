@@ -23,9 +23,9 @@ module cpu(
         output [`WORD_SIZE-1:0] output_port,
         output is_halted
 );
-        wire isHLT;
         wire use_rs;
         wire use_rt;
+        wire isHLT_to_ID_EX;
         wire valid_inst_to_ID_EX;
         wire MemtoReg_to_ID_EX;
         wire RegWrite_to_ID_EX;
@@ -42,7 +42,7 @@ module cpu(
         wire [`WORD_SIZE-1:0] instruction;
 
         Control control_unit (.instruction(instruction),
-                              .isHLT(isHLT),
+                              .isHLT(isHLT_to_ID_EX),
                               .use_rs(use_rs),
                               .use_rt(use_rt),
                               .valid_inst(valid_inst_to_ID_EX),
@@ -60,9 +60,9 @@ module cpu(
 
         Datapath datapath_unit (.clk(Clk),
                                 .reset_n(Reset_N),
-                                .isHLT(isHLT),
                                 .use_rs(use_rs),
                                 .use_rt(use_rt),
+                                .isHLT_to_ID_EX(isHLT_to_ID_EX),
                                 .valid_inst_to_ID_EX(valid_inst_to_ID_EX),
                                 .MemtoReg_to_ID_EX(MemtoReg_to_ID_EX),
                                 .RegWrite_to_ID_EX(RegWrite_to_ID_EX),

@@ -6,10 +6,10 @@ module Datapath(
     input reset_n,
 
     // receive signals from Control
-    input isHLT,
     input use_rs,
     input use_rt,
     // Blue WB Block Register
+    input isHLT_to_ID_EX,
     input valid_inst_to_ID_EX,
     input MemtoReg_to_ID_EX,
     input RegWrite_to_ID_EX,
@@ -108,6 +108,7 @@ module Datapath(
     wire RegWrite; // usable in WB
     wire isLink; // usable in WB
     wire outputenable; // usable in WB
+    wire isHLT; // usable in WB
 
 
     // wires to transfer signals from ID_EX to EX_MEM
@@ -115,6 +116,7 @@ module Datapath(
     wire MemWrite_to_EX_MEM;
     wire [1:0] PCSource_to_EX_MEM;
     wire isBranchorJmp_to_EX_MEM;
+    wire isHLT_to_EX_MEM;
     wire valid_inst_to_EX_MEM;
     wire MemtoReg_to_EX_MEM;
     wire RegWrite_to_EX_MEM;
@@ -122,6 +124,7 @@ module Datapath(
     wire outputenable_to_EX_MEM;
 
     // wires to transfer signals from EX_MEM to MEM_WB
+    wire isHLT_to_MEM_WB;
     wire valid_inst_to_MEM_WB;
     wire MemtoReg_to_MEM_WB;
     wire RegWrite_to_MEM_WB;
@@ -184,11 +187,13 @@ module Datapath(
     ID_EX_REG id_ex_reg_unit (.clk(clk),
                               .reset_n(reset_n),
                               .isFlush(flush_ID_EX),
+                              .in_isHLT(isHLT_to_ID_EX),
                               .in_valid_inst(valid_inst_to_ID_EX),
                               .in_MemtoReg(MemtoReg_to_ID_EX),
                               .in_RegWrite(RegWrite_to_ID_EX),
                               .in_isLink(isLink_to_ID_EX),
                               .in_outputenable(outputenable_to_ID_EX),
+                              .out_isHLT(isHLT_to_EX_MEM),
                               .out_valid_inst(valid_inst_to_EX_MEM),
                               .out_MemtoReg(MemtoReg_to_EX_MEM),
                               .out_RegWrite(RegWrite_to_EX_MEM),
@@ -230,11 +235,13 @@ module Datapath(
     EX_MEM_REG ex_mem_reg_unit (.clk(clk),
                                 .reset_n(reset_n),
                                 .isFlush(flush_EX_MEM),
+                                .in_isHLT(isHLT_to_EX_MEM),
                                 .in_valid_inst(valid_inst_to_EX_MEM),
                                 .in_MemtoReg(MemtoReg_to_EX_MEM),
                                 .in_RegWrite(RegWrite_to_EX_MEM),
                                 .in_isLink(isLink_to_EX_MEM),
                                 .in_outputenable(outputenable_to_EX_MEM),
+                                .out_isHLT(isHLT_to_MEM_WB),
                                 .out_valid_inst(valid_inst_to_MEM_WB),
                                 .out_MemtoReg(MemtoReg_to_MEM_WB),
                                 .out_RegWrite(RegWrite_to_MEM_WB),
@@ -273,11 +280,13 @@ module Datapath(
 
     MEM_WB_REG mem_wb_reg_unit (.clk(clk),
                                 .reset_n(reset_n),
+                                .in_isHLT(isHLT_to_MEM_WB),
                                 .in_valid_inst(valid_inst_to_MEM_WB),
                                 .in_MemtoReg(MemtoReg_to_MEM_WB),
                                 .in_RegWrite(RegWrite_to_MEM_WB),
                                 .in_isLink(isLink_to_MEM_WB),
                                 .in_outputenable(outputenable_to_MEM_WB),
+                                .out_isHLT(isHLT),
                                 .out_valid_inst(valid_inst),
                                 .out_MemtoReg(MemtoReg),
                                 .out_RegWrite(RegWrite),
@@ -310,7 +319,7 @@ module Datapath(
     assign PC_branch_target = PC_from_ID_EX + 1 + sign_extended_imm;
     assign PC_j_target = {PC_from_ID_EX[15:12], instruction_to_EX_MEM[11:0]};
     assign PC_jr_target = RF_read_data1_from_ID_EX;
-    assign ALU_SourceB = (ALUSource == 2'b00) ? RF_read_data1_from_ID_EX:
+    assign ALU_SourceB = (ALUSource == 2'b00) ? RF_read_data2_from_ID_EX:
                          (ALUSource == 2'b01) ? sign_extended_imm:
                          zero_extended_imm;
     assign sign_extended_imm = {{8{instruction_to_EX_MEM[7]}}, instruction_to_EX_MEM[7:0]};
@@ -332,8 +341,10 @@ module Datapath(
     assign rw_data = isLink ? PC_plus_1_from_MEM_WB : mem_or_alu_muxed;
 
     // output port
-    always @(posedge outputenable) begin
-        output_port <= RF_read_data1_in_WB;
+    always @(posedge clk) begin
+        if (outputenable) begin
+            output_port <= RF_read_data1_in_WB;
+        end
     end
     // num_inst count
     always @(posedge clk or negedge reset_n) begin
