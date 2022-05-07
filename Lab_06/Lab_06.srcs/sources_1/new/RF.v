@@ -8,13 +8,11 @@ module RF(
     input clk,
     input reset_n,
 
-    output [15:0] data1,
-    output [15:0] data2
+    output reg [15:0] data1,
+    output reg [15:0] data2
     );
 
     reg [15:0] internal_register[0:3]; // reg [15:0] array length with 4 to save the data
-    reg [15:0] data1;
-    reg [15:0] data2;
 
     always @(*) begin // asynchronous read functionality
         data1 = internal_register[addr1];

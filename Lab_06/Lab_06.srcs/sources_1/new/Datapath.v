@@ -46,7 +46,6 @@ module Datapath(
     wire [`WORD_SIZE-1:0] nextPC; // PC from BTB
     wire [`WORD_SIZE-1:0] currentPC; // PC from PC unit
     wire [`WORD_SIZE-1:0] PC_to_ID_EX; // PC from IF_ID Register
-    // wire [`WORD_SIZE-1:0] instruction; // instruction in ID stage
     wire [`WORD_SIZE-1:0] RF_read_data1; // Read data1 from RF in ID stage
     wire [`WORD_SIZE-1:0] RF_read_data2; // Read data2 from RF in ID stage
     wire [`WORD_SIZE-1:0] PC_from_ID_EX; // PC used in EX stage
@@ -85,7 +84,9 @@ module Datapath(
     wire [`WORD_SIZE-1:0] rw_data; // muxed from mem_or_alu_muxed and PC + 1
     wire [`WORD_SIZE-1:0] PC_plus_1_from_MEM_WB; // PC + 1 in WB stage
     wire [`WORD_SIZE-1:0] RF_read_data1_in_WB; // Read data1 in WB stage
-
+    wire [`WORD_SIZE-1:0] predicted_nPC_to_ID_EX;
+    wire [`WORD_SIZE-1:0] predicted_nPC_to_EX_MEM;
+    wire [`WORD_SIZE-1:0] predicted_nPC; // predicted_nPC in MEM stage
     // wires for hazard
     wire BTB_forward_PC;
     wire stall_PC;
@@ -164,8 +165,10 @@ module Datapath(
                               .isStall(stall_IF_ID),
                               .isFlush(flush_IF_ID),
                               .in_PC(currentPC),
+                              .in_predicted_nPC(nextPC),
                               .in_instruction(i_data),
                               .out_PC(PC_to_ID_EX),
+                              .out_predicted_nPC(predicted_nPC_to_ID_EX),
                               .out_instruction(instruction));
 
     RF rf_unit (.addr1(instruction[11:10]),
@@ -206,10 +209,12 @@ module Datapath(
                               .out_ALUop(ALUop),
                               .out_ALUSource(ALUSource),
                               .in_PC(PC_to_ID_EX),
+                              .in_predicted_nPC(predicted_nPC_to_ID_EX),
                               .in_instruction(instruction),
                               .in_RF_read_data1(RF_read_data1),
                               .in_RF_read_data2(RF_read_data2),
                               .out_PC(PC_from_ID_EX),
+                              .out_predicted_nPC(predicted_nPC_to_EX_MEM),
                               .out_instruction(instruction_to_EX_MEM),
                               .out_RF_read_data1(RF_read_data1_from_ID_EX),
                               .out_RF_read_data2(RF_read_data2_from_ID_EX));
@@ -245,6 +250,7 @@ module Datapath(
                                 .out_isBranchorJmp(isBranchorJmp),
                                 .in_instruction(instruction_to_EX_MEM),
                                 .in_PC_plus_1(PC_plus_1),
+                                .in_predicted_nPC(predicted_nPC_to_EX_MEM),
                                 .in_branch_target(PC_branch_target),
                                 .in_J_target(PC_j_target),
                                 .in_JR_target(PC_jr_target),
@@ -255,6 +261,7 @@ module Datapath(
                                 .in_branch_cond(branch_cond_to_EX_MEM),
                                 .out_instruction(instruction_to_MEM_WB),
                                 .out_PC_plus_1(PC_plus_1_from_EX_MEM),
+                                .out_predicted_nPC(predicted_nPC),
                                 .out_branch_target(PC_branch_target_from_EX_MEM),
                                 .out_J_target(PC_j_target_from_EX_MEM),
                                 .out_JR_target(PC_jr_target_from_EX_MEM),
@@ -307,7 +314,7 @@ module Datapath(
                          (ALUSource == 2'b01) ? sign_extended_imm:
                          zero_extended_imm;
     assign sign_extended_imm = {{8{instruction_to_EX_MEM[7]}}, instruction_to_EX_MEM[7:0]};
-    assign zero_extended_imm = {{8{0}}, instruction_to_EX_MEM[7:0]};
+    assign zero_extended_imm = {{8{1'b0}}, instruction_to_EX_MEM[7:0]};
     assign rw_destination_to_EX_MEM = (RegDest == 2'b00) ? instruction_to_EX_MEM[9:8]:
                                       (RegDest == 2'b01) ? instruction_to_EX_MEM[7:6]:
                                       2'b10;
@@ -320,7 +327,7 @@ module Datapath(
                             (PCSource == 2'b01) ? PC_j_target_from_EX_MEM:
                             PC_jr_target_from_EX_MEM;
     assign update_addr = PC_plus_1_from_EX_MEM - 1;
-    assign branch_mispredicted = isBranchorJmp & (actual_next_PC != PC_from_ID_EX);
+    assign branch_mispredicted = isBranchorJmp & (actual_next_PC != predicted_nPC);
     assign mem_or_alu_muxed = MemtoReg ? Mem_read_data_from_MEM_WB : ALU_result_from_MEM_WB;
     assign rw_data = isLink ? PC_plus_1_from_MEM_WB : mem_or_alu_muxed;
 

@@ -32,7 +32,7 @@ module BTB(
         end
         else begin
             if (BTBupdate) begin
-                BTB_table[update_addr] <= {1, update_data};
+                BTB_table[update_addr] <= {1'b1, update_data};
             end
         end
     end

@@ -30,6 +30,7 @@ module EX_MEM_REG(
 
     input [`WORD_SIZE-1:0] in_instruction,
     input [`WORD_SIZE-1:0] in_PC_plus_1,
+    input [`WORD_SIZE-1:0] in_predicted_nPC,
     input [`WORD_SIZE-1:0] in_branch_target,
     input [`WORD_SIZE-1:0] in_J_target,
     input [`WORD_SIZE-1:0] in_JR_target,
@@ -40,6 +41,7 @@ module EX_MEM_REG(
     input in_branch_cond,
     output reg [`WORD_SIZE-1:0] out_instruction,
     output reg [`WORD_SIZE-1:0] out_PC_plus_1,
+    output reg [`WORD_SIZE-1:0] out_predicted_nPC,
     output reg [`WORD_SIZE-1:0] out_branch_target,
     output reg [`WORD_SIZE-1:0] out_J_target,
     output reg [`WORD_SIZE-1:0] out_JR_target,
@@ -62,6 +64,7 @@ module EX_MEM_REG(
             out_isBranchorJmp <= 0;
             out_instruction <= `IDLE;
             out_PC_plus_1 <= 0;
+            out_predicted_nPC <= 0;
             out_branch_target <= 0;
             out_J_target <= 0;
             out_JR_target <= 0;
@@ -83,6 +86,7 @@ module EX_MEM_REG(
             out_isBranchorJmp <= 0;
             out_instruction <= `IDLE;
             out_PC_plus_1 <= 0;
+            out_predicted_nPC <= 0;
             out_branch_target <= 0;
             out_J_target <= 0;
             out_JR_target <= 0;
@@ -104,6 +108,7 @@ module EX_MEM_REG(
             out_isBranchorJmp <= in_isBranchorJmp;
             out_instruction <= in_instruction;
             out_PC_plus_1 <= in_PC_plus_1;
+            out_predicted_nPC <= in_predicted_nPC;
             out_branch_target <= in_branch_target;
             out_J_target <= in_J_target;
             out_JR_target <= in_JR_target;

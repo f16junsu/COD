@@ -48,12 +48,12 @@ module ALU(
             end
             `OP_SHR: begin
                 Cout = 0;
-                C = {1'b0, A[`WORD_SIZE-1:1]};
+                C = {A[`WORD_SIZE-1], A[`WORD_SIZE-1:1]};
                 branch_cond = 0;
             end
             `OP_LHI: begin
                 Cout = 0;
-                C = {B[7:0], {8{0}}};
+                C = {B[7:0], {8{1'b0}}};
                 branch_cond = 0;
             end
             `OP_BNE: begin
@@ -81,8 +81,8 @@ module ALU(
                 C = A + B;
                 branch_cond = 0;
             end
-            `OP_ID: {Cout, C, branch_cond} = {0, A, 0}; // just for filling
-            `OP_ZERO: {Cout, C, branch_cond} = {0, 0, 0}; // just for filling
+            `OP_ID: {Cout, C, branch_cond} = {1'b0, A, 1'b0}; // just for filling
+            `OP_ZERO: {Cout, C, branch_cond} = {1'b0, 16'b0, 1'b0}; // just for filling
         endcase
      end
 endmodule

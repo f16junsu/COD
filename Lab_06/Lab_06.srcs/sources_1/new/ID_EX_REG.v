@@ -37,10 +37,12 @@ module ID_EX_REG(
     output reg [1:0] out_ALUSource,
 
     input [`WORD_SIZE-1:0] in_PC,
+    input [`WORD_SIZE-1:0] in_predicted_nPC,
     input [`WORD_SIZE-1:0] in_instruction,
     input [`WORD_SIZE-1:0] in_RF_read_data1,
     input [`WORD_SIZE-1:0] in_RF_read_data2,
     output reg [`WORD_SIZE-1:0] out_PC,
+    output reg [`WORD_SIZE-1:0] out_predicted_nPC,
     output reg [`WORD_SIZE-1:0] out_instruction,
     output reg [`WORD_SIZE-1:0] out_RF_read_data1,
     output reg [`WORD_SIZE-1:0] out_RF_read_data2
@@ -60,6 +62,7 @@ module ID_EX_REG(
             out_ALUop <= `OP_ID;
             out_ALUSource <= 2'b00;
             out_PC <= 0;
+            out_predicted_nPC <= 0;
             out_instruction <= `IDLE;
             out_RF_read_data1 <= 0;
             out_RF_read_data2 <= 0;
@@ -78,6 +81,7 @@ module ID_EX_REG(
             out_ALUop <= `OP_ID;
             out_ALUSource <= 2'b00;
             out_PC <= 0;
+            out_predicted_nPC <= 0;
             out_instruction <= `IDLE;
             out_RF_read_data1 <= 0;
             out_RF_read_data2 <= 0;
@@ -96,6 +100,7 @@ module ID_EX_REG(
             out_ALUop <= in_ALUop;
             out_ALUSource <= in_ALUSource;
             out_PC <= in_PC;
+            out_predicted_nPC <= in_predicted_nPC;
             out_instruction <= in_instruction;
             out_RF_read_data1 <= in_RF_read_data1;
             out_RF_read_data2 <= in_RF_read_data2;
