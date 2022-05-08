@@ -22,7 +22,7 @@ module BTB(
     integer c;
 
     assign nextPC = BTB_forward_PC ? actual_next_PC : // internal forwarding next PC
-                    (BTB_table[read_addr][`WORD_SIZE] & BHT[read_addr] > 1) ? BTB_table[read_addr][`WORD_SIZE-1:0]:
+                    (BTB_table[read_addr][`WORD_SIZE] && BHT[read_addr] > 1) ? BTB_table[read_addr][`WORD_SIZE-1:0]:
                     read_addr + 1;
 
     always @(posedge clk or negedge reset_n) begin

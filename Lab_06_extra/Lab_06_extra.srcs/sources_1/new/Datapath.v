@@ -244,7 +244,7 @@ module Datapath(
                               .out_RF_read_data2(RF_read_data2_from_ID_EX));
 
     ALU alu_unit (.A(ALU_SourceA_with_forwarding),
-                  .B(ALU_SourceB_with_forwarding),
+                  .B(ALU_SourceB),
                   .OP(ALUop),
                   .Cin(0),
                   .C(ALU_result_to_EX_MEM),
@@ -326,7 +326,7 @@ module Datapath(
     assign ALU_SourceA_with_forwarding = (ForwardA == 2'b00) ? RF_read_data1_from_ID_EX :
                                          (ForwardA == 2'b01) ? ALU_result_from_EX_MEM :
                                          rw_data;
-    assign ALU_SourceB_with_forwarding = (ForwardB == 2'b00) ? ALU_SourceB :
+    assign ALU_SourceB_with_forwarding = (ForwardB == 2'b00) ? RF_read_data2_from_ID_EX :
                                          (ForwardB == 2'b01) ? ALU_result_from_EX_MEM :
                                          rw_data;
     always @(*) begin
@@ -336,20 +336,20 @@ module Datapath(
         end
         else begin */
             // Setting Forward A
-            if (use_rs_in_EX & instruction_to_EX_MEM[11:10] == rw_destination_to_MEM_WB & RegWrite_to_MEM_WB) begin
+            if (use_rs_in_EX && instruction_to_EX_MEM[11:10] == rw_destination_to_MEM_WB && RegWrite_to_MEM_WB) begin
                 ForwardA = 2'b01;
             end
-            else if (use_rs_in_EX & instruction_to_EX_MEM[11:10] == rw_destination & RegWrite) begin
+            else if (use_rs_in_EX && instruction_to_EX_MEM[11:10] == rw_destination && RegWrite) begin
                 ForwardA = 2'b10;
             end
             else begin
                 ForwardA = 2'b00;
             end
             // Setting Forward B
-            if (use_rt_in_EX & instruction_to_EX_MEM[9:8] == rw_destination_to_MEM_WB & RegWrite_to_MEM_WB) begin
+            if (use_rt_in_EX && instruction_to_EX_MEM[9:8] == rw_destination_to_MEM_WB && RegWrite_to_MEM_WB) begin
                 ForwardB = 2'b01;
             end
-            else if (use_rt_in_EX & instruction_to_EX_MEM[9:8] == rw_destination & RegWrite) begin
+            else if (use_rt_in_EX && instruction_to_EX_MEM[9:8] == rw_destination && RegWrite) begin
                 ForwardB = 2'b10;
             end
             else begin
@@ -357,8 +357,8 @@ module Datapath(
             end
         // end
     end
-    assign Read_after_LWD = (instruction_to_MEM_WB[`WORD_SIZE-1:`WORD_SIZE-4] == 4'b0111 & use_rs_in_EX & instruction_to_EX_MEM[11:10] == rw_destination_to_MEM_WB) |
-                            (instruction_to_MEM_WB[`WORD_SIZE-1:`WORD_SIZE-4] == 4'b0111 & use_rt_in_EX & instruction_to_EX_MEM[9:8] == rw_destination_to_MEM_WB);
+    assign Read_after_LWD = (instruction_to_MEM_WB[`WORD_SIZE-1:`WORD_SIZE-4] == 4'b0111 && use_rs_in_EX && instruction_to_EX_MEM[11:10] == rw_destination_to_MEM_WB) |
+                            (instruction_to_MEM_WB[`WORD_SIZE-1:`WORD_SIZE-4] == 4'b0111 && use_rt_in_EX && instruction_to_EX_MEM[9:8] == rw_destination_to_MEM_WB);
 
     // wire assignment
     assign i_readM = 1;
@@ -373,8 +373,8 @@ module Datapath(
     assign PC_plus_1 = PC_from_ID_EX + 1;
     assign PC_branch_target = PC_from_ID_EX + 1 + sign_extended_imm;
     assign PC_j_target = {PC_from_ID_EX[15:12], instruction_to_EX_MEM[11:0]};
-    assign PC_jr_target = RF_read_data1_from_ID_EX;
-    assign ALU_SourceB = (ALUSource == 2'b00) ? RF_read_data2_from_ID_EX:
+    assign PC_jr_target = ALU_SourceA_with_forwarding;
+    assign ALU_SourceB = (ALUSource == 2'b00) ? ALU_SourceB_with_forwarding:
                          (ALUSource == 2'b01) ? sign_extended_imm:
                          zero_extended_imm;
     assign sign_extended_imm = {{8{instruction_to_EX_MEM[7]}}, instruction_to_EX_MEM[7:0]};
@@ -391,7 +391,7 @@ module Datapath(
                             (PCSource == 2'b01) ? PC_j_target_from_EX_MEM:
                             PC_jr_target_from_EX_MEM;
     assign update_addr = PC_plus_1_from_EX_MEM - 1;
-    assign branch_mispredicted = isBranchorJmp & (actual_next_PC != predicted_nPC);
+    assign branch_mispredicted = isBranchorJmp && (actual_next_PC != predicted_nPC);
     assign mem_or_alu_muxed = MemtoReg ? Mem_read_data_from_MEM_WB : ALU_result_from_MEM_WB;
     assign rw_data = isLink ? PC_plus_1_from_MEM_WB : mem_or_alu_muxed;
 
