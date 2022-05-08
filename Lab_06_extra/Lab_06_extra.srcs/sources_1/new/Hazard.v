@@ -11,11 +11,13 @@ module Hazard(
     input RegWrite_EX,
     input RegWrite_MEM,
 
+    input hazard_by_Read_After_LWD,
     input branch_mispredicted,
 
     output reg BTB_forward_PC,
     output reg stall_PC,
     output reg stall_IF_ID,
+    output reg stall_ID_EX,
     output reg flush_IF_ID,
     output reg flush_ID_EX,
     output reg flush_EX_MEM
@@ -38,22 +40,25 @@ module Hazard(
             BTB_forward_PC = 1;
             stall_PC = 0;
             stall_IF_ID = 0;
+            stall_ID_EX = 0;
             flush_IF_ID = 1;
             flush_ID_EX = 1;
             flush_EX_MEM = 1;
         end
-        else if (hazard_by_RAW) begin
+        else if (hazard_by_Read_After_LWD) begin
             BTB_forward_PC = 0;
             stall_PC = 1;
             stall_IF_ID = 1;
+            stall_ID_EX = 1;
             flush_IF_ID = 0;
-            flush_ID_EX = 1;
-            flush_EX_MEM = 0;
+            flush_ID_EX = 0;
+            flush_EX_MEM = 1;
         end
         else begin
             BTB_forward_PC = 0;
             stall_PC = 0;
             stall_IF_ID = 0;
+            stall_ID_EX = 0;
             flush_IF_ID = 0;
             flush_ID_EX = 0;
             flush_EX_MEM = 0;

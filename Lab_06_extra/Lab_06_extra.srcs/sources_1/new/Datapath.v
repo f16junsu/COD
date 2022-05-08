@@ -87,13 +87,20 @@ module Datapath(
     wire [`WORD_SIZE-1:0] predicted_nPC_to_ID_EX;
     wire [`WORD_SIZE-1:0] predicted_nPC_to_EX_MEM;
     wire [`WORD_SIZE-1:0] predicted_nPC; // predicted_nPC in MEM stage
+
     // wires for hazard
     wire BTB_forward_PC;
     wire stall_PC;
     wire stall_IF_ID;
+    wire stall_ID_EX;
     wire flush_IF_ID;
     wire flush_ID_EX;
     wire flush_EX_MEM;
+    wire Read_after_LWD;
+
+    // regs for forwarding
+    reg [1:0] ForwardA;
+    reg [1:0] ForwardB;
 
     wire [1:0] RegDest; // usable in EX
     wire [3:0] ALUop; // usable in EX
@@ -109,7 +116,8 @@ module Datapath(
     wire isLink; // usable in WB
     wire outputenable; // usable in WB
     wire isHLT; // usable in WB
-
+    wire use_rs_in_EX;
+    wire use_rt_in_EX;
 
     // wires to transfer signals from ID_EX to EX_MEM
     wire MemRead_to_EX_MEM;
@@ -131,6 +139,10 @@ module Datapath(
     wire isLink_to_MEM_WB;
     wire outputenable_to_MEM_WB;
 
+    // wires for data forwarding
+    wire [`WORD_SIZE-1:0] ALU_SourceA_with_forwarding;
+    wire [`WORD_SIZE-1:0] ALU_SourceB_with_forwarding;
+
     Hazard hazard_unit (.rs_ID(instruction[11:10]),
                         .rt_ID(instruction[9:8]),
                         .dest_EX(rw_destination_to_EX_MEM),
@@ -139,10 +151,12 @@ module Datapath(
                         .use_rt(use_rt),
                         .RegWrite_EX(RegWrite_to_EX_MEM),
                         .RegWrite_MEM(RegWrite_to_MEM_WB),
+                        .hazard_by_Read_After_LWD(Read_after_LWD),
                         .branch_mispredicted(branch_mispredicted),
                         .BTB_forward_PC(BTB_forward_PC),
                         .stall_PC(stall_PC),
                         .stall_IF_ID(stall_IF_ID),
+                        .stall_ID_EX(stall_ID_EX),
                         .flush_IF_ID(flush_IF_ID),
                         .flush_ID_EX(flush_ID_EX),
                         .flush_EX_MEM(flush_EX_MEM));
@@ -192,12 +206,16 @@ module Datapath(
                               .in_MemtoReg(MemtoReg_to_ID_EX),
                               .in_RegWrite(RegWrite_to_ID_EX),
                               .in_isLink(isLink_to_ID_EX),
+                              .in_use_rs(use_rs),
+                              .in_use_rt(use_rt),
                               .in_outputenable(outputenable_to_ID_EX),
                               .out_isHLT(isHLT_to_EX_MEM),
                               .out_valid_inst(valid_inst_to_EX_MEM),
                               .out_MemtoReg(MemtoReg_to_EX_MEM),
                               .out_RegWrite(RegWrite_to_EX_MEM),
                               .out_isLink(isLink_to_EX_MEM),
+                              .out_use_rs(use_rs_in_EX),
+                              .out_use_rt(use_rt_in_EX),
                               .out_outputenable(outputenable_to_EX_MEM),
                               .in_MemRead(MemRead_to_ID_EX),
                               .in_MemWrite(MemWrite_to_ID_EX),
@@ -224,8 +242,8 @@ module Datapath(
                               .out_RF_read_data1(RF_read_data1_from_ID_EX),
                               .out_RF_read_data2(RF_read_data2_from_ID_EX));
 
-    ALU alu_unit (.A(RF_read_data1_from_ID_EX),
-                  .B(ALU_SourceB),
+    ALU alu_unit (.A(ALU_SourceA_with_forwarding),
+                  .B(ALU_SourceB_with_forwarding),
                   .OP(ALUop),
                   .Cin(0),
                   .C(ALU_result_to_EX_MEM),
@@ -263,8 +281,8 @@ module Datapath(
                                 .in_JR_target(PC_jr_target),
                                 .in_ALU_result(ALU_result_to_EX_MEM),
                                 .in_RFwrite_destination(rw_destination_to_EX_MEM),
-                                .in_RF_read_data1(RF_read_data1_from_ID_EX),
-                                .in_RF_read_data2(RF_read_data2_from_ID_EX),
+                                .in_RF_read_data1(ALU_SourceA_with_forwarding),
+                                .in_RF_read_data2(ALU_SourceB_with_forwarding),
                                 .in_branch_cond(branch_cond_to_EX_MEM),
                                 .out_instruction(instruction_to_MEM_WB),
                                 .out_PC_plus_1(PC_plus_1_from_EX_MEM),
@@ -303,6 +321,43 @@ module Datapath(
                                 .out_RF_read_data1(RF_read_data1_in_WB),
                                 .out_RFwrite_destination(rw_destination));
 
+    // data forwarding wires
+    assign ALU_SourceA_with_forwarding = (ForwardA == 2'b00) ? RF_read_data1_from_ID_EX :
+                                         (ForwardA == 2'b01) ? ALU_result_from_EX_MEM :
+                                         rw_data;
+    assign ALU_SourceB_with_forwarding = (ForwardB == 2'b00) ? ALU_SourceB :
+                                         (ForwardB == 2'b01) ? ALU_result_from_EX_MEM :
+                                         rw_data;
+    always @(*) begin
+        if (instruction_to_MEM_WB[`WORD_SIZE-1:`WORD_SIZE-4] == 4'b0111) begin // if LWD
+            ForwardA = 2'b00;
+            ForwardB = 2'b00;
+        end
+        else begin
+            // Setting Forward A
+            if (use_rs_in_EX & instruction_to_EX_MEM[11:10] == rw_destination_to_MEM_WB & RegWrite_to_MEM_WB) begin
+                ForwardA = 2'b01;
+            end
+            else if (use_rs_in_EX & instruction_to_EX_MEM[11:10] == rw_destination & RegWrite) begin
+                ForwardA = 2'b10;
+            end
+            else begin
+                ForwardA = 2'b00;
+            end
+            // Setting Forward B
+            if (use_rt_in_EX & instruction_to_EX_MEM[9:8] == rw_destination_to_MEM_WB & RegWrite_to_MEM_WB) begin
+                ForwardB = 2'b01;
+            end
+            else if (use_rt_in_EX & instruction_to_EX_MEM[9:8] == rw_destination & RegWrite) begin
+                ForwardB = 2'b10;
+            end
+            else begin
+                ForwardB = 2'b00;
+            end
+        end
+    end
+    assign Read_after_LWD = (instruction_to_MEM_WB[`WORD_SIZE-1:`WORD_SIZE-4] == 4'b0111 & use_rs_in_EX & instruction_to_EX_MEM[11:10] == rw_destination_to_MEM_WB) |
+                            (instruction_to_MEM_WB[`WORD_SIZE-1:`WORD_SIZE-4] == 4'b0111 & use_rt_in_EX & instruction_to_EX_MEM[9:8] == rw_destination_to_MEM_WB);
 
     // wire assignment
     assign i_readM = 1;
@@ -312,7 +367,6 @@ module Datapath(
     assign d_writeM = MemWrite;
     assign d_address = ALU_result_from_EX_MEM;
     assign d_data = MemWrite ? RF_read_data2_from_EX_MEM : 16'bz;
-    // assign output_port = outputenable ? RF_read_data1_from_ID_EX : 16'bz;
     assign is_halted = isHLT;
 
     assign PC_plus_1 = PC_from_ID_EX + 1;

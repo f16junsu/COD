@@ -4,6 +4,7 @@
 module ID_EX_REG(
     input clk,
     input reset_n,
+    input isStall,
     input isFlush,
 
     // Blue WB Block Register
@@ -29,10 +30,14 @@ module ID_EX_REG(
     output reg out_isBranchorJmp,
 
     // Blue EX Block Register
+    input in_use_rs,
+    input in_use_rt,
     input in_outputenable,
     input [1:0] in_RegDest,
     input [3:0] in_ALUop,
     input [1:0] in_ALUSource,
+    output reg out_use_rs,
+    output reg out_use_rt,
     output reg out_outputenable,
     output reg [1:0] out_RegDest,
     output reg [3:0] out_ALUop,
@@ -60,6 +65,8 @@ module ID_EX_REG(
             out_MemWrite <= 0;
             out_PCSource <= 2'b00;
             out_isBranchorJmp <= 0;
+            out_use_rs <= 0;
+            out_use_rt <= 0;
             out_outputenable <= 0;
             out_RegDest <= 2'b00;
             out_ALUop <= `OP_ID;
@@ -69,6 +76,28 @@ module ID_EX_REG(
             out_instruction <= `IDLE;
             out_RF_read_data1 <= 0;
             out_RF_read_data2 <= 0;
+        end
+        else if (isStall) begin
+            out_isHLT <= out_isHLT;
+            out_valid_inst <= out_valid_inst;
+            out_MemtoReg <= out_MemtoReg;
+            out_RegWrite <= out_RegWrite;
+            out_isLink <= out_isLink;
+            out_MemRead <= out_MemRead;
+            out_MemWrite <= out_MemWrite;
+            out_PCSource <= out_PCSource;
+            out_isBranchorJmp <= out_isBranchorJmp;
+            out_use_rs <= out_use_rs;
+            out_use_rt <= out_use_rt;
+            out_outputenable <= out_outputenable;
+            out_RegDest <= out_RegDest;
+            out_ALUop <= out_ALUop;
+            out_ALUSource <= out_ALUSource;
+            out_PC <= out_PC;
+            out_predicted_nPC <= out_predicted_nPC;
+            out_instruction <= out_instruction;
+            out_RF_read_data1 <= out_RF_read_data1;
+            out_RF_read_data2 <= out_RF_read_data2;
         end
         else if (isFlush) begin
             out_isHLT <= 0;
@@ -80,6 +109,8 @@ module ID_EX_REG(
             out_MemWrite <= 0;
             out_PCSource <= 2'b00;
             out_isBranchorJmp <= 0;
+            out_use_rs <= 0;
+            out_use_rt <= 0;
             out_outputenable <= 0;
             out_RegDest <= 2'b00;
             out_ALUop <= `OP_ID;
@@ -100,6 +131,8 @@ module ID_EX_REG(
             out_MemWrite <= in_MemWrite;
             out_PCSource <= in_PCSource;
             out_isBranchorJmp <= in_isBranchorJmp;
+            out_use_rs <= in_use_rs;
+            out_use_rt <= in_use_rt;
             out_outputenable <= in_outputenable;
             out_RegDest <= in_RegDest;
             out_ALUop <= in_ALUop;
