@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="6870000fs"></ZoomStartTime>
-      <ZoomEndTime time="9256001fs"></ZoomEndTime>
-      <Cursor1Time time="8178000fs"></Cursor1Time>
+      <ZoomStartTime time="5965487fs"></ZoomStartTime>
+      <ZoomEndTime time="8915488fs"></ZoomEndTime>
+      <Cursor1Time time="9293773fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="147"></NameColumnWidth>
-      <ValueColumnWidth column_width="73"></ValueColumnWidth>
+      <NameColumnWidth column_width="174"></NameColumnWidth>
+      <ValueColumnWidth column_width="93"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="25" />
+   <WVObjectSize size="26" />
    <wvobject fp_name="/cpu_TB/reset_n" type="logic">
       <obj_property name="ElementShortName">reset_n</obj_property>
       <obj_property name="ObjectShortName">reset_n</obj_property>
@@ -116,6 +116,10 @@
    <wvobject fp_name="/cpu_TB/UUT/datapath_unit/ALU_SourceA_with_forwarding" type="array">
       <obj_property name="ElementShortName">ALU_SourceA_with_forwarding[15:0]</obj_property>
       <obj_property name="ObjectShortName">ALU_SourceA_with_forwarding[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/UUT/datapath_unit/ALU_SourceB_with_forwarding" type="array">
+      <obj_property name="ElementShortName">ALU_SourceB_with_forwarding[15:0]</obj_property>
+      <obj_property name="ObjectShortName">ALU_SourceB_with_forwarding[15:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu_TB/UUT/datapath_unit/Read_after_LWD" type="logic">
       <obj_property name="ElementShortName">Read_after_LWD</obj_property>

@@ -200,6 +200,7 @@ module Datapath(
 
     ID_EX_REG id_ex_reg_unit (.clk(clk),
                               .reset_n(reset_n),
+                              .isStall(stall_ID_EX),
                               .isFlush(flush_ID_EX),
                               .in_isHLT(isHLT_to_ID_EX),
                               .in_valid_inst(valid_inst_to_ID_EX),
@@ -329,11 +330,11 @@ module Datapath(
                                          (ForwardB == 2'b01) ? ALU_result_from_EX_MEM :
                                          rw_data;
     always @(*) begin
-        if (instruction_to_MEM_WB[`WORD_SIZE-1:`WORD_SIZE-4] == 4'b0111) begin // if LWD
+       /*  if (instruction_to_MEM_WB[`WORD_SIZE-1:`WORD_SIZE-4] == 4'b0111) begin // if LWD
             ForwardA = 2'b00;
             ForwardB = 2'b00;
         end
-        else begin
+        else begin */
             // Setting Forward A
             if (use_rs_in_EX & instruction_to_EX_MEM[11:10] == rw_destination_to_MEM_WB & RegWrite_to_MEM_WB) begin
                 ForwardA = 2'b01;
@@ -354,7 +355,7 @@ module Datapath(
             else begin
                 ForwardB = 2'b00;
             end
-        end
+        // end
     end
     assign Read_after_LWD = (instruction_to_MEM_WB[`WORD_SIZE-1:`WORD_SIZE-4] == 4'b0111 & use_rs_in_EX & instruction_to_EX_MEM[11:10] == rw_destination_to_MEM_WB) |
                             (instruction_to_MEM_WB[`WORD_SIZE-1:`WORD_SIZE-4] == 4'b0111 & use_rt_in_EX & instruction_to_EX_MEM[9:8] == rw_destination_to_MEM_WB);
