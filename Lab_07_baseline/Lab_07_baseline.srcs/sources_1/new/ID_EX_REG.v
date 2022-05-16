@@ -5,6 +5,7 @@ module ID_EX_REG(
     input clk,
     input reset_n,
     input isFlush,
+    input isStall,
 
     // Blue WB Block Register
     input in_isHLT,
@@ -89,6 +90,26 @@ module ID_EX_REG(
             out_instruction <= `IDLE;
             out_RF_read_data1 <= 0;
             out_RF_read_data2 <= 0;
+        end
+        else if (isStall) begin
+            out_isHLT <= out_isHLT;
+            out_valid_inst <= out_valid_inst;
+            out_MemtoReg <= out_MemtoReg;
+            out_RegWrite <= out_RegWrite;
+            out_isLink <= out_isLink;
+            out_MemRead <= out_MemRead;
+            out_MemWrite <= out_MemWrite;
+            out_PCSource <= out_PCSource;
+            out_isBranchorJmp <= out_isBranchorJmp;
+            out_outputenable <= out_outputenable;
+            out_RegDest <= out_RegDest;
+            out_ALUop <= out_ALUop;
+            out_ALUSource <= out_ALUSource;
+            out_PC <= out_PC;
+            out_predicted_nPC <= out_predicted_nPC;
+            out_instruction <= out_instruction;
+            out_RF_read_data1 <= out_RF_read_data1;
+            out_RF_read_data2 <= out_RF_read_data2;
         end
         else begin
             out_isHLT <= in_isHLT;

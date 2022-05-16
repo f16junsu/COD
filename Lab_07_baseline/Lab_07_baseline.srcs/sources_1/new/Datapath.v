@@ -87,13 +87,23 @@ module Datapath(
     wire [`WORD_SIZE-1:0] predicted_nPC_to_ID_EX;
     wire [`WORD_SIZE-1:0] predicted_nPC_to_EX_MEM;
     wire [`WORD_SIZE-1:0] predicted_nPC; // predicted_nPC in MEM stage
+
+    // regs for i_mem, d_mem status
+    reg [1:0] i_status;
+    reg [1:0] d_status;
+
     // wires for hazard
+    wire i_mem_hazard;
+    wire d_mem_hazard;
     wire BTB_forward_PC;
     wire stall_PC;
     wire stall_IF_ID;
+    wire stall_ID_EX;
+    wire stall_EX_MEM;
     wire flush_IF_ID;
     wire flush_ID_EX;
     wire flush_EX_MEM;
+    wire flush_MEM_WB;
 
     wire [1:0] RegDest; // usable in EX
     wire [3:0] ALUop; // usable in EX
@@ -139,13 +149,20 @@ module Datapath(
                         .use_rt(use_rt),
                         .RegWrite_EX(RegWrite_to_EX_MEM),
                         .RegWrite_MEM(RegWrite_to_MEM_WB),
+                        .valid_IF_ID(valid_inst_to_ID_EX),
+                        .valid_ID_EX(valid_inst_to_EX_MEM),
                         .branch_mispredicted(branch_mispredicted),
+                        .i_mem_hazard(i_mem_hazard),
+                        .d_mem_hazard(d_mem_hazard),
                         .BTB_forward_PC(BTB_forward_PC),
                         .stall_PC(stall_PC),
                         .stall_IF_ID(stall_IF_ID),
+                        .stall_ID_EX(stall_ID_EX),
+                        .stall_EX_MEM(stall_EX_MEM),
                         .flush_IF_ID(flush_IF_ID),
                         .flush_ID_EX(flush_ID_EX),
-                        .flush_EX_MEM(flush_EX_MEM));
+                        .flush_EX_MEM(flush_EX_MEM),
+                        .flush_MEM_WB(flush_MEM_WB));
 
     BTB btb_unit (.clk(clk),
                   .reset_n(reset_n),
@@ -187,6 +204,7 @@ module Datapath(
     ID_EX_REG id_ex_reg_unit (.clk(clk),
                               .reset_n(reset_n),
                               .isFlush(flush_ID_EX),
+                              .isStall(stall_ID_EX),
                               .in_isHLT(isHLT_to_ID_EX),
                               .in_valid_inst(valid_inst_to_ID_EX),
                               .in_MemtoReg(MemtoReg_to_ID_EX),
@@ -235,6 +253,7 @@ module Datapath(
     EX_MEM_REG ex_mem_reg_unit (.clk(clk),
                                 .reset_n(reset_n),
                                 .isFlush(flush_EX_MEM),
+                                .isStall(stall_EX_MEM),
                                 .in_isHLT(isHLT_to_EX_MEM),
                                 .in_valid_inst(valid_inst_to_EX_MEM),
                                 .in_MemtoReg(MemtoReg_to_EX_MEM),
@@ -280,6 +299,7 @@ module Datapath(
 
     MEM_WB_REG mem_wb_reg_unit (.clk(clk),
                                 .reset_n(reset_n),
+                                .isFlush(flush_MEM_WB),
                                 .in_isHLT(isHLT_to_MEM_WB),
                                 .in_valid_inst(valid_inst_to_MEM_WB),
                                 .in_MemtoReg(MemtoReg_to_MEM_WB),
@@ -303,6 +323,9 @@ module Datapath(
                                 .out_RF_read_data1(RF_read_data1_in_WB),
                                 .out_RFwrite_destination(rw_destination));
 
+    // hazard wires assignment
+    assign i_mem_hazard = (i_status == 2'b00 || i_status == 2'b01);
+    assign d_mem_hazard = (d_readM || d_writeM) && (d_status == 2'b00 || d_status == 2'b01);
 
     // wire assignment
     assign i_readM = 1;
@@ -312,7 +335,6 @@ module Datapath(
     assign d_writeM = MemWrite;
     assign d_address = ALU_result_from_EX_MEM;
     assign d_data = MemWrite ? RF_read_data2_from_EX_MEM : 16'bz;
-    // assign output_port = outputenable ? RF_read_data1_from_ID_EX : 16'bz;
     assign is_halted = isHLT;
 
     assign PC_plus_1 = PC_from_ID_EX + 1;
@@ -340,6 +362,34 @@ module Datapath(
     assign mem_or_alu_muxed = MemtoReg ? Mem_read_data_from_MEM_WB : ALU_result_from_MEM_WB;
     assign rw_data = isLink ? PC_plus_1_from_MEM_WB : mem_or_alu_muxed;
 
+    // status update
+    always @(posedge clk or negedge reset_n) begin
+        if (!reset_n) begin
+            i_status <= 2'b00;
+            d_status <= 2'b00;
+        end
+        else begin
+            case (i_status)
+                2'b00: i_status <= 2'b01;
+                2'b01: i_status <= 2'b10;
+                2'b10: i_status <= 2'b00;
+            endcase
+            if (d_readM) begin
+                case (d_status)
+                    2'b00: d_status <= 2'b01;
+                    2'b01: d_status <= 2'b10;
+                    2'b10: d_status <= 2'b00;
+                endcase
+            end
+            else if (d_writeM) begin
+                case (d_status)
+                    2'b00: d_status <= 2'b01;
+                    2'b01: d_status <= 2'b10;
+                    2'b10: d_status <= 2'b00;
+                endcase
+            end
+        end
+    end
     // output port
     always @(posedge clk) begin
         if (outputenable) begin

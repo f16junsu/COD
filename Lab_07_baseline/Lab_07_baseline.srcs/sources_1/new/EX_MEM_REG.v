@@ -5,6 +5,7 @@ module EX_MEM_REG(
     input clk,
     input reset_n,
     input isFlush,
+    input isStall,
 
     // Blue WB Block Register
     input in_isHLT,
@@ -99,6 +100,29 @@ module EX_MEM_REG(
             out_RF_read_data1 <= 0;
             out_RF_read_data2 <= 0;
             out_branch_cond <= 0;
+        end
+        else if (isStall) begin
+            out_isHLT <= out_isHLT;
+            out_valid_inst <= out_valid_inst;
+            out_MemtoReg <= out_MemtoReg;
+            out_RegWrite <= out_RegWrite;
+            out_isLink <= out_isLink;
+            out_outputenable <= out_outputenable;
+            out_MemRead <= out_MemRead;
+            out_MemWrite <= out_MemWrite;
+            out_PCSource <= out_PCSource;
+            out_isBranchorJmp <= out_isBranchorJmp;
+            out_instruction <= out_instruction;
+            out_PC_plus_1 <= out_PC_plus_1;
+            out_predicted_nPC <= out_predicted_nPC;
+            out_branch_target <= out_branch_target;
+            out_J_target <= out_J_target;
+            out_JR_target <= out_JR_target;
+            out_ALU_result <= out_ALU_result;
+            out_RFwrite_destination <= out_RFwrite_destination;
+            out_RF_read_data1 <= out_RF_read_data1;
+            out_RF_read_data2 <= out_RF_read_data2;
+            out_branch_cond <= out_branch_cond;
         end
         else begin
             out_isHLT <= in_isHLT;

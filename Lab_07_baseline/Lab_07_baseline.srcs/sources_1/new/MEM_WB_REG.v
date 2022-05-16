@@ -4,6 +4,7 @@
 module MEM_WB_REG(
     input clk,
     input reset_n,
+    input isFlush,
 
     // Blue WB Block Register
     input in_isHLT,
@@ -32,6 +33,19 @@ module MEM_WB_REG(
     );
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
+            out_isHLT <= 0;
+            out_valid_inst <= 0;
+            out_MemtoReg <= 0;
+            out_RegWrite <= 0;
+            out_isLink <= 0;
+            out_outputenable <= 0;
+            out_MemRead_data <= 0;
+            out_ALU_result <= 0;
+            out_PC_plus_1 <= 0;
+            out_RF_read_data1 <= 0;
+            out_RFwrite_destination <= 0;
+        end
+        else if (isFlush) begin
             out_isHLT <= 0;
             out_valid_inst <= 0;
             out_MemtoReg <= 0;

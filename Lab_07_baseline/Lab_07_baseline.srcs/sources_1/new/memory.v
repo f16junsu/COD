@@ -2,14 +2,14 @@
 `define PERIOD1 100
 `define MEMORY_SIZE 256	//	size of memory is 2^8 words (reduced size)
 `define WORD_SIZE 16	//	instead of 2^16 words to reduce memory
-			//	requirements in the Active-HDL simulator 
+			//	requirements in the Active-HDL simulator
 
 module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_writeM, d_address, d_data);
 	input clk;
 	wire clk;
 	input reset_n;
 	wire reset_n;
-	
+
 	// Instruction memory interface
 	input i_readM;
 	wire i_readM;
@@ -19,7 +19,7 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 	wire [`WORD_SIZE-1:0] i_address;
 	inout i_data;
 	wire [`WORD_SIZE-1:0] i_data;
-	
+
 	// Data memory interface
 	input d_readM;
 	wire d_readM;
@@ -29,17 +29,22 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 	wire [`WORD_SIZE-1:0] d_address;
 	inout d_data;
 	wire [`WORD_SIZE-1:0] d_data;
-	
+
 	reg [`WORD_SIZE-1:0] memory [0:`MEMORY_SIZE-1];
 	reg [`WORD_SIZE-1:0] i_outputData;
 	reg [`WORD_SIZE-1:0] d_outputData;
-	
-	assign i_data = i_readM?i_outputData:`WORD_SIZE'bz;
-	assign d_data = d_readM?d_outputData:`WORD_SIZE'bz;
-	
+	// to make delay
+	reg [1:0] i_status; // 00: first, 01: after 1 cycle,
+	reg [1:0] d_status; // 00: first, 01: after 1 cycle,
+
+	assign i_data = i_readM? i_outputData:`WORD_SIZE'bz;
+	assign d_data = d_readM? d_outputData:`WORD_SIZE'bz;
+
 	always@(posedge clk)
 		if(!reset_n)
 			begin
+				i_status <= 2'b00;
+				d_status <= 2'b00;
 				memory[16'h0] <= 16'h9023;
 				memory[16'h1] <= 16'h1;
 				memory[16'h2] <= 16'hffff;
@@ -242,9 +247,64 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 			end
 		else
 			begin
-				if(i_readM)i_outputData <= memory[i_address];
-				if(i_writeM)memory[i_address] <= i_data;
-				if(d_readM)d_outputData <= memory[d_address];
-				if(d_writeM)memory[d_address] <= d_data;
+				if (i_readM) begin
+					case (i_status)
+						2'b00: i_status <= 2'b01;
+						2'b01: i_status <= 2'b10;
+						2'b10: begin
+							i_status <= 2'b00;
+							i_outputData <= memory[i_address];
+						end
+					endcase
+				end
+				if (d_readM) begin
+					case (d_status)
+						2'b00: d_status <= 2'b01;
+						2'b01: d_status <= 2'b10;
+						2'b10: begin
+							d_status <= 2'b00;
+							d_outputData <= memory[d_address];
+						end
+					endcase
+				end
+				else if (d_writeM) begin
+					case (d_status)
+						2'b00: d_status <= 2'b01;
+						2'b01: d_status <= 2'b10;
+						2'b10: begin
+							d_status <= 2'b00;
+							memory[d_address] <= d_data;
+						end
+					endcase
+				end
+
+				/* if (i_status) begin // in process
+					i_status <= 1'b0;
+					i_outputData <= memory[i_address];
+				end
+				else begin // first glance at PC + data ready
+					i_status <= 1'b1;
+				end
+				if (d_readM) begin
+					if (d_status) begin // in process
+						d_status <= 1'b0;
+						d_outputData <= memory[d_address];
+					end
+					else begin
+						d_status <= 1'b1;
+					end
+				end
+				else if (d_writeM) begin
+					if (d_status) begin // in process
+						d_status <= 1'b0;
+						memory[d_address] <= d_data;
+					end
+					else begin
+						d_status <= 1'b1;
+					end
+				end
+				else begin
+					d_status <= 1'b0;
+				end */
 			end
 endmodule

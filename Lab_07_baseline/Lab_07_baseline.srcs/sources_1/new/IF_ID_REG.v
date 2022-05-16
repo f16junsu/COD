@@ -3,8 +3,8 @@
 module IF_ID_REG(
     input clk,
     input reset_n,
-    input isStall,
     input isFlush,
+    input isStall,
 
     input [`WORD_SIZE-1:0] in_PC,
     input [`WORD_SIZE-1:0] in_predicted_nPC,
