@@ -324,8 +324,8 @@ module Datapath(
                                 .out_RFwrite_destination(rw_destination));
 
     // hazard wires assignment
-    assign i_mem_hazard = (i_status == 2'b00 || i_status == 2'b01);
-    assign d_mem_hazard = (d_readM || d_writeM) && (d_status == 2'b00 || d_status == 2'b01);
+    assign i_mem_hazard = i_status == 2'b00;
+    assign d_mem_hazard = (d_readM || d_writeM) && d_status == 2'b00;
 
     // wire assignment
     assign i_readM = 1;
@@ -371,21 +371,18 @@ module Datapath(
         else begin
             case (i_status)
                 2'b00: i_status <= 2'b01;
-                2'b01: i_status <= 2'b10;
-                2'b10: i_status <= 2'b00;
+                2'b01: i_status <= 2'b00;
             endcase
             if (d_readM) begin
                 case (d_status)
                     2'b00: d_status <= 2'b01;
-                    2'b01: d_status <= 2'b10;
-                    2'b10: d_status <= 2'b00;
+                    2'b01: d_status <= 2'b00;
                 endcase
             end
             else if (d_writeM) begin
                 case (d_status)
                     2'b00: d_status <= 2'b01;
-                    2'b01: d_status <= 2'b10;
-                    2'b10: d_status <= 2'b00;
+                    2'b01: d_status <= 2'b00;
                 endcase
             end
         end

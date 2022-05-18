@@ -34,8 +34,8 @@ module Datapath(
     output [`WORD_SIZE-1:0] instruction
     );
     wire [`WORD_SIZE-1:0] currentPC; // currentPC
-    wire [`WORD_SIZE-1:0] muxed_memory_address;
-    wire [`WORD_SIZE-1:0] muxed_write_dest; // RF write destination
+    wire [`WORD_SIZE-1:0] muxed_memory_address; // depends on IroD
+    wire [1:0] muxed_write_dest; // RF write destination
     wire [`WORD_SIZE-1:0] muxed_write_data; // RF write data
     wire [`WORD_SIZE-1:0] concat_pcsource; // {PC[[15:12]], IR[11:0]}
     wire [`WORD_SIZE-1:0] ALUsource1; // ALUSource A
@@ -50,7 +50,7 @@ module Datapath(
     wire branch_cond; // wiring between Datapath and Control
     wire alu_overflow; // just in case for alu overflow
 
-    reg [`WORD_SIZE-1:0] received_data;
+    reg [`WORD_SIZE-1:0] received_data; // internal register to save received data temporarily
     reg [`WORD_SIZE-1:0] IR;
     reg [`WORD_SIZE-1:0] MDR;
     reg [`WORD_SIZE-1:0] A;
@@ -120,6 +120,7 @@ module Datapath(
     always @(*) begin
         output_port <= outputenable ? RF_read_result1 : output_port;
     end
+
     // latching registers
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
@@ -150,5 +151,4 @@ module Datapath(
             ALUout <= ALU_result;
         end
     end
-
 endmodule

@@ -8,6 +8,9 @@
 `define STATE_WB 3'b100
 `define STATE_ZERO 3'b111 // state when reset
 
+// ROM file for control signals
+// based on uPC(state) and opcode, funct
+// control signals are combinational logically determined
 module ROM(
     input [2:0] state,
     input [3:0] opcode,
@@ -33,9 +36,9 @@ module ROM(
     output reg [3:0] AluControl,
     output reg [2:0] nstate
     );
-    reg [15:0] control_signals;
+    reg [15:0] control_signals; // for aliasing
 
-    assign isHLT = control_signals === 16'b0;
+    assign isHLT = control_signals === 16'b0; // assert when all control_signal bits are 0(`FUNC_HLT)
     assign outputenable = control_signals[15];
     assign PCWritecond = control_signals[14];
     assign PCWrite = control_signals[13];

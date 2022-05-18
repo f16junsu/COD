@@ -250,8 +250,7 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 				if (i_readM) begin
 					case (i_status)
 						2'b00: i_status <= 2'b01;
-						2'b01: i_status <= 2'b10;
-						2'b10: begin
+						2'b01: begin
 							i_status <= 2'b00;
 							i_outputData <= memory[i_address];
 						end
@@ -260,8 +259,7 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 				if (d_readM) begin
 					case (d_status)
 						2'b00: d_status <= 2'b01;
-						2'b01: d_status <= 2'b10;
-						2'b10: begin
+						2'b01: begin
 							d_status <= 2'b00;
 							d_outputData <= memory[d_address];
 						end
@@ -270,41 +268,11 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 				else if (d_writeM) begin
 					case (d_status)
 						2'b00: d_status <= 2'b01;
-						2'b01: d_status <= 2'b10;
-						2'b10: begin
+						2'b01: begin
 							d_status <= 2'b00;
 							memory[d_address] <= d_data;
 						end
 					endcase
 				end
-
-				/* if (i_status) begin // in process
-					i_status <= 1'b0;
-					i_outputData <= memory[i_address];
-				end
-				else begin // first glance at PC + data ready
-					i_status <= 1'b1;
-				end
-				if (d_readM) begin
-					if (d_status) begin // in process
-						d_status <= 1'b0;
-						d_outputData <= memory[d_address];
-					end
-					else begin
-						d_status <= 1'b1;
-					end
-				end
-				else if (d_writeM) begin
-					if (d_status) begin // in process
-						d_status <= 1'b0;
-						memory[d_address] <= d_data;
-					end
-					else begin
-						d_status <= 1'b1;
-					end
-				end
-				else begin
-					d_status <= 1'b0;
-				end */
 			end
 endmodule
