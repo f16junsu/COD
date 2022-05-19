@@ -11,13 +11,13 @@ module cpu(
         output i_readM,
         output i_writeM,
         output [`WORD_SIZE-1:0] i_address,
-        inout [`WORD_SIZE-1:0] i_data,
+        inout [`LINE_SIZE-1:0] i_data,
 
 	// Data memory interface
         output d_readM,
         output d_writeM,
         output [`WORD_SIZE-1:0] d_address,
-        inout [`WORD_SIZE-1:0] d_data,
+        inout [`LINE_SIZE-1:0] d_data,
 
         output [`WORD_SIZE-1:0] num_inst,
         output [`WORD_SIZE-1:0] output_port,
@@ -40,6 +40,43 @@ module cpu(
         wire [1:0] ALUSource_to_ID_EX;
 
         wire [`WORD_SIZE-1:0] instruction;
+        // wires for cache
+        wire ic_readC;
+        wire ic_ready;
+        wire [`WORD_SIZE-1:0] ic_address;
+        wire [`WORD_SIZE-1:0] ic_data;
+
+        wire dc_readC;
+        wire dc_writeC;
+        wire [`WORD_SIZE-1:0] dc_address;
+        wire dc_ready;
+        wire dc_w_done;
+        wire [`WORD_SIZE-1:0] dc_data;
+
+
+
+        Instruction_Cache ic_unit (.clk(Clk),
+                                   .reset_n(Reset_N),
+                                   .readC(ic_readC),
+                                   .address(ic_address),
+                                   .ready(ic_ready),
+                                   .data(ic_data),
+                                   .line_from_mem(i_data),
+                                   .readM(i_readM),
+                                   .address_to_mem(i_address));
+
+        Data_Cache dc_unit (.clk(Clk),
+                            .reset_n(Reset_N),
+                            .readC(dc_readC),
+                            .writeC(dc_writeC),
+                            .address(dc_address),
+                            .ready(dc_ready),
+                            .w_done(dc_w_done),
+                            .data(dc_data),
+                            .line_mem(d_data),
+                            .readM(d_readM),
+                            .writeM(d_writeM),
+                            .address_to_mem(d_address));
 
         Control control_unit (.instruction(instruction),
                               .isHLT(isHLT_to_ID_EX),
@@ -76,14 +113,17 @@ module cpu(
                                 .ALUop_to_ID_EX(ALUop_to_ID_EX),
                                 .ALUSource_to_ID_EX(ALUSource_to_ID_EX),
                                 .instruction(instruction),
-                                .i_readM(i_readM),
-                                .i_writeM(i_writeM),
-                                .i_address(i_address),
-                                .i_data(i_data),
-                                .d_readM(d_readM),
-                                .d_writeM(d_writeM),
-                                .d_address(d_address),
-                                .d_data(d_data),
+                                .ic_ready(ic_ready),
+                                .i_readM(ic_readC),
+                                //.i_writeM(i_writeM),
+                                .i_address(ic_address),
+                                .i_data(ic_data),
+                                .dc_ready(dc_ready),
+                                .dc_w_done(dc_w_done),
+                                .d_readM(dc_readC),
+                                .d_writeM(dc_writeC),
+                                .d_address(dc_address),
+                                .d_data(dc_data),
                                 .num_inst(num_inst),
                                 .output_port(output_port),
                                 .is_halted(is_halted));

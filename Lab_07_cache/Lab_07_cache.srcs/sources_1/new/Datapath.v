@@ -28,12 +28,15 @@ module Datapath(
     output [`WORD_SIZE-1:0] instruction,
 
 	// Instruction memory interface
+    input ic_ready,
     output i_readM,
     output i_writeM,
     output [`WORD_SIZE-1:0] i_address,
     inout [`WORD_SIZE-1:0] i_data,
 
 	// Data memory interface
+    input dc_ready,
+    input dc_w_done,
     output d_readM,
     output d_writeM,
     output [`WORD_SIZE-1:0] d_address,
@@ -324,12 +327,12 @@ module Datapath(
                                 .out_RFwrite_destination(rw_destination));
 
     // hazard wires assignment
-    assign i_mem_hazard = i_status == 2'b00;
-    assign d_mem_hazard = (d_readM || d_writeM) && d_status == 2'b00;
+    assign i_mem_hazard = i_readM && !ic_ready;
+    assign d_mem_hazard = (d_readM && !dc_ready) || (d_writeM && !dc_w_done);
 
     // wire assignment
     assign i_readM = 1;
-    assign i_write = 0;
+    assign i_writeM = 0;
     assign i_address = currentPC;
     assign d_readM = MemRead;
     assign d_writeM = MemWrite;
@@ -362,7 +365,7 @@ module Datapath(
     assign mem_or_alu_muxed = MemtoReg ? Mem_read_data_from_MEM_WB : ALU_result_from_MEM_WB;
     assign rw_data = isLink ? PC_plus_1_from_MEM_WB : mem_or_alu_muxed;
 
-    // status update
+    /* // status update
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
             i_status <= 2'b00;
@@ -386,7 +389,7 @@ module Datapath(
                 endcase
             end
         end
-    end
+    end */
     // output port
     always @(posedge clk) begin
         if (outputenable) begin

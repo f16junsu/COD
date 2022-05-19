@@ -18,7 +18,7 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 	input [`WORD_SIZE-1:0] i_address;
 	wire [`WORD_SIZE-1:0] i_address;
 	inout i_data;
-	wire [`WORD_SIZE-1:0] i_data;
+	wire [`LINE_SIZE-1:0] i_data;
 
 	// Data memory interface
 	input d_readM;
@@ -28,17 +28,17 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 	input [`WORD_SIZE-1:0] d_address;
 	wire [`WORD_SIZE-1:0] d_address;
 	inout d_data;
-	wire [`WORD_SIZE-1:0] d_data;
+	wire [`LINE_SIZE-1:0] d_data;
 
 	reg [`WORD_SIZE-1:0] memory [0:`MEMORY_SIZE-1];
-	reg [`WORD_SIZE-1:0] i_outputData;
-	reg [`WORD_SIZE-1:0] d_outputData;
+	reg [`LINE_SIZE-1:0] i_outputData;
+	reg [`LINE_SIZE-1:0] d_outputData;
 	// to make delay
 	reg [1:0] i_status; // 00: first, 01: after 1 cycle,
 	reg [1:0] d_status; // 00: first, 01: after 1 cycle,
 
-	assign i_data = i_readM? i_outputData:`WORD_SIZE'bz;
-	assign d_data = d_readM? d_outputData:`WORD_SIZE'bz;
+	assign i_data = i_readM? i_outputData:`LINE_SIZE'bz;
+	assign d_data = d_readM? d_outputData:`LINE_SIZE'bz;
 
 	always@(posedge clk)
 		if(!reset_n)
@@ -252,7 +252,10 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 						2'b00: i_status <= 2'b01;
 						2'b01: begin
 							i_status <= 2'b00;
-							i_outputData <= memory[i_address];
+							i_outputData[`WORD_SIZE-1:0] <= memory[{i_address[`WORD_SIZE-1:2], 2'b00}];
+							i_outputData[2*`WORD_SIZE-1:`WORD_SIZE] <= memory[{i_address[`WORD_SIZE-1:2], 2'b01}];
+							i_outputData[3*`WORD_SIZE-1:2*`WORD_SIZE] <= memory[{i_address[`WORD_SIZE-1:2], 2'b10}];
+							i_outputData[4*`WORD_SIZE-1:3*`WORD_SIZE] <= memory[{i_address[`WORD_SIZE-1:2], 2'b11}];
 						end
 					endcase
 				end
@@ -261,7 +264,10 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 						2'b00: d_status <= 2'b01;
 						2'b01: begin
 							d_status <= 2'b00;
-							d_outputData <= memory[d_address];
+							d_outputData[`WORD_SIZE-1:0] <= memory[{d_address[`WORD_SIZE-1:2], 2'b00}];
+							d_outputData[2*`WORD_SIZE-1:`WORD_SIZE] <= memory[{d_address[`WORD_SIZE-1:2], 2'b01}];
+							d_outputData[3*`WORD_SIZE-1:2*`WORD_SIZE] <= memory[{d_address[`WORD_SIZE-1:2], 2'b10}];
+							d_outputData[4*`WORD_SIZE-1:3*`WORD_SIZE] <= memory[{d_address[`WORD_SIZE-1:2], 2'b11}];
 						end
 					endcase
 				end
@@ -270,7 +276,7 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 						2'b00: d_status <= 2'b01;
 						2'b01: begin
 							d_status <= 2'b00;
-							memory[d_address] <= d_data;
+							memory[d_address] <= d_data[`WORD_SIZE-1:0];
 						end
 					endcase
 				end
