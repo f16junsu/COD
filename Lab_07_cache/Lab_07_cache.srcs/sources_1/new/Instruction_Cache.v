@@ -19,8 +19,8 @@ module Instruction_Cache(
     reg [`TAG_SIZE + `LINE_SIZE:0] cache_table [0:3];
     reg [1:0] status;
     // reg [`WORD_SIZE-1:0] output_data;
-    reg [`WORD_SIZE-1:0] hit_counter;
-    reg [`WORD_SIZE-1:0] miss_counter;
+    reg [`WORD_SIZE-1:0] i_hit_counter;
+    reg [`WORD_SIZE-1:0] i_miss_counter;
     wire [1:0] idx;
     wire [1:0] bo;
     wire [`WORD_SIZE-1:0] selected_word;
@@ -38,8 +38,8 @@ module Instruction_Cache(
         if (!reset_n) begin
             ready <= 1'b0;
             status <= 2'b00;
-            hit_counter <= 16'b0;
-            miss_counter <= 16'b0;
+            i_hit_counter <= 16'b0;
+            i_miss_counter <= 16'b0;
             readM <= 0;
             cache_table[0] <= 77'b0;
             cache_table[1] <= 77'b0;
@@ -52,17 +52,17 @@ module Instruction_Cache(
                     2'b00: begin // initial state
                         if (cache_table[idx][`TAG_SIZE + `LINE_SIZE]) begin // if valid
                             if (cache_table[idx][`TAG_SIZE-1 + `LINE_SIZE:`LINE_SIZE] == address[`WORD_SIZE-1:4]) begin // hit
-                                hit_counter <= hit_counter + 1;
+                                i_hit_counter <= i_hit_counter + 1;
                                 ready <= 1;
                             end
                             else begin // miss
-                                miss_counter <= miss_counter + 1;
+                                i_miss_counter <= i_miss_counter + 1;
                                 status <= 2'b01;
                                 readM <= 1;
                             end
                         end
                         else begin // miss
-                                miss_counter <= miss_counter + 1;
+                                i_miss_counter <= i_miss_counter + 1;
                                 status <= 2'b01;
                                 readM <= 1;
                             end
