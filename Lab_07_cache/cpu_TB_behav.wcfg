@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="243867705fs"></ZoomStartTime>
-      <ZoomEndTime time="244551706fs"></ZoomEndTime>
-      <Cursor1Time time="244513705fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="1558001fs"></ZoomEndTime>
+      <Cursor1Time time="570000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="107"></NameColumnWidth>
-      <ValueColumnWidth column_width="108"></ValueColumnWidth>
+      <ValueColumnWidth column_width="100"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="24" />
+   <WVObjectSize size="27" />
    <wvobject fp_name="/cpu_TB/reset_n" type="logic">
       <obj_property name="ElementShortName">reset_n</obj_property>
       <obj_property name="ObjectShortName">reset_n</obj_property>
@@ -100,24 +100,38 @@
       <obj_property name="ElementShortName">Passed[15:0]</obj_property>
       <obj_property name="ObjectShortName">Passed[15:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu_TB/UUT/ic_unit/hit_counter" type="array">
-      <obj_property name="ElementShortName">hit_counter[15:0]</obj_property>
-      <obj_property name="ObjectShortName">hit_counter[15:0]</obj_property>
+   <wvobject fp_name="/cpu_TB/UUT/ic_unit/i_hit_counter" type="array">
+      <obj_property name="ElementShortName">i_hit_counter[15:0]</obj_property>
+      <obj_property name="ObjectShortName">i_hit_counter[15:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu_TB/UUT/dc_unit/hit_counter" type="array">
-      <obj_property name="ElementShortName">hit_counter[15:0]</obj_property>
-      <obj_property name="ObjectShortName">hit_counter[15:0]</obj_property>
+   <wvobject fp_name="/cpu_TB/UUT/ic_unit/i_miss_counter" type="array">
+      <obj_property name="ElementShortName">i_miss_counter[15:0]</obj_property>
+      <obj_property name="ObjectShortName">i_miss_counter[15:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu_TB/UUT/ic_unit/miss_counter" type="array">
-      <obj_property name="ElementShortName">miss_counter[15:0]</obj_property>
-      <obj_property name="ObjectShortName">miss_counter[15:0]</obj_property>
+   <wvobject fp_name="/cpu_TB/UUT/dc_unit/dr_hit_counter" type="array">
+      <obj_property name="ElementShortName">dr_hit_counter[15:0]</obj_property>
+      <obj_property name="ObjectShortName">dr_hit_counter[15:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu_TB/UUT/dc_unit/miss_counter" type="array">
-      <obj_property name="ElementShortName">miss_counter[15:0]</obj_property>
-      <obj_property name="ObjectShortName">miss_counter[15:0]</obj_property>
+   <wvobject fp_name="/cpu_TB/UUT/dc_unit/dr_miss_counter" type="array">
+      <obj_property name="ElementShortName">dr_miss_counter[15:0]</obj_property>
+      <obj_property name="ObjectShortName">dr_miss_counter[15:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/UUT/dc_unit/dw_hit_counter" type="array">
+      <obj_property name="ElementShortName">dw_hit_counter[15:0]</obj_property>
+      <obj_property name="ObjectShortName">dw_hit_counter[15:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/UUT/dc_unit/dw_miss_counter" type="array">
+      <obj_property name="ElementShortName">dw_miss_counter[15:0]</obj_property>
+      <obj_property name="ObjectShortName">dw_miss_counter[15:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/UUT/ic_unit/isStall" type="logic">
+      <obj_property name="ElementShortName">isStall</obj_property>
+      <obj_property name="ObjectShortName">isStall</obj_property>
    </wvobject>
 </wave_config>

@@ -4,6 +4,7 @@
 module Instruction_Cache(
     input clk,
     input reset_n,
+    input isStall,
 
     // path between Datapath
     input readC,
@@ -52,7 +53,7 @@ module Instruction_Cache(
                     2'b00: begin // initial state
                         if (cache_table[idx][`TAG_SIZE + `LINE_SIZE]) begin // if valid
                             if (cache_table[idx][`TAG_SIZE-1 + `LINE_SIZE:`LINE_SIZE] == address[`WORD_SIZE-1:4]) begin // hit
-                                i_hit_counter <= i_hit_counter + 1;
+                                // if (!isStall) i_hit_counter <= i_hit_counter + 1;
                                 ready <= 1;
                             end
                             else begin // miss
@@ -80,6 +81,11 @@ module Instruction_Cache(
         end
     end
     always @(posedge clk) begin
+        if (cache_table[idx][`TAG_SIZE + `LINE_SIZE]) begin // if valid
+            if (cache_table[idx][`TAG_SIZE-1 + `LINE_SIZE:`LINE_SIZE] == address[`WORD_SIZE-1:4]) begin // hit
+                if (!isStall) i_hit_counter <= i_hit_counter + 1;
+                end
+        end
         ready <= 0;
     end
 endmodule

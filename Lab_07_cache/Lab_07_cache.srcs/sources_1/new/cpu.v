@@ -40,6 +40,7 @@ module cpu(
         wire [1:0] ALUSource_to_ID_EX;
 
         wire [`WORD_SIZE-1:0] instruction;
+        wire stall_PC;
         // wires for cache
         wire ic_readC;
         wire ic_ready;
@@ -57,6 +58,7 @@ module cpu(
 
         Instruction_Cache ic_unit (.clk(Clk),
                                    .reset_n(Reset_N),
+                                   .isStall(stall_PC),
                                    .readC(ic_readC),
                                    .address(ic_address),
                                    .ready(ic_ready),
@@ -113,6 +115,7 @@ module cpu(
                                 .ALUop_to_ID_EX(ALUop_to_ID_EX),
                                 .ALUSource_to_ID_EX(ALUSource_to_ID_EX),
                                 .instruction(instruction),
+                                .stall_PC_to_ic(stall_PC),
                                 .ic_ready(ic_ready),
                                 .i_readM(ic_readC),
                                 //.i_writeM(i_writeM),

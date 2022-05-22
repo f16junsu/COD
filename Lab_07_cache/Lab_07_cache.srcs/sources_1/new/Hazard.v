@@ -70,18 +70,7 @@ module Hazard(
                 flush_EX_MEM = 0;
                 flush_MEM_WB = 0;
             end
-            4'b0010: begin
-                BTB_forward_PC = 1;
-                stall_PC = 0;
-                stall_IF_ID = 0;
-                stall_ID_EX = 0;
-                stall_EX_MEM = 0;
-                flush_IF_ID = 1;
-                flush_ID_EX = 1;
-                flush_EX_MEM = 1;
-                flush_MEM_WB = 0;
-            end
-            4'b0011: begin
+            4'b0010, 4'b0011: begin
                 BTB_forward_PC = 1;
                 stall_PC = 0;
                 stall_IF_ID = 0;

@@ -26,6 +26,7 @@ module Datapath(
     input [1:0] ALUSource_to_ID_EX,
 
     output [`WORD_SIZE-1:0] instruction,
+    output stall_PC_to_ic,
 
 	// Instruction memory interface
     input ic_ready,
@@ -329,6 +330,7 @@ module Datapath(
     // hazard wires assignment
     assign i_mem_hazard = i_readM && !ic_ready;
     assign d_mem_hazard = (d_readM && !dc_ready) || (d_writeM && !dc_w_done);
+    assign stall_PC_to_ic = stall_PC;
 
     // wire assignment
     assign i_readM = 1;
