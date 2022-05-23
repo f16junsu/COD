@@ -19,7 +19,7 @@ module Data_Cache(
     output reg writeM,
     output [`WORD_SIZE-1:0] address_to_mem
     );
-    reg [`TAG_SIZE + `LINE_SIZE:0] cache_table [0:3];
+    reg [`TAG_SIZE + `LINE_SIZE + 1:0] cache_table [0:3];
     reg [1:0] status;
     // reg [`WORD_SIZE-1:0] output_data;
     reg [`WORD_SIZE-1:0] hit_counter;
@@ -35,7 +35,7 @@ module Data_Cache(
                            (bo == 2'b01) ? cache_table[idx][2*`WORD_SIZE-1:`WORD_SIZE]:
                            (bo == 2'b10) ? cache_table[idx][3*`WORD_SIZE-1:2*`WORD_SIZE]:
                            cache_table[idx][4*`WORD_SIZE-1:3*`WORD_SIZE];
-    assign line_mem = writeM? {3*`WORD_SIZE'b0, data} : 77'bz;
+    assign line_mem = writeM? {3*`WORD_SIZE'b0, data} : 78'bz;
     assign address_to_mem = address;
 
     always @(negedge clk or negedge reset_n) begin
@@ -47,10 +47,10 @@ module Data_Cache(
             readM <= 0;
             writeM <= 0;
             w_done <= 0;
-            cache_table[0] <= 77'b0;
-            cache_table[1] <= 77'b0;
-            cache_table[2] <= 77'b0;
-            cache_table[3] <= 77'b0;
+            cache_table[0] <= 78'b0;
+            cache_table[1] <= 78'b0;
+            cache_table[2] <= 78'b0;
+            cache_table[3] <= 78'b0;
         end
         else begin
             if (readC) begin
