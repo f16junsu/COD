@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="5820640fs"></ZoomStartTime>
-      <ZoomEndTime time="8125641fs"></ZoomEndTime>
-      <Cursor1Time time="18550fs"></Cursor1Time>
+      <ZoomStartTime time="15559740fs"></ZoomStartTime>
+      <ZoomEndTime time="18649741fs"></ZoomEndTime>
+      <Cursor1Time time="17869740fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="158"></NameColumnWidth>
-      <ValueColumnWidth column_width="67"></ValueColumnWidth>
+      <NameColumnWidth column_width="155"></NameColumnWidth>
+      <ValueColumnWidth column_width="58"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="32" />
+   <WVObjectSize size="38" />
    <wvobject fp_name="/cpu_TB/reset_n" type="logic">
       <obj_property name="ElementShortName">reset_n</obj_property>
       <obj_property name="ObjectShortName">reset_n</obj_property>
@@ -147,5 +147,29 @@
    <wvobject fp_name="/cpu_TB/Passed" type="array">
       <obj_property name="ElementShortName">Passed[15:0]</obj_property>
       <obj_property name="ObjectShortName">Passed[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/d_wr_bus" type="logic">
+      <obj_property name="ElementShortName">d_wr_bus</obj_property>
+      <obj_property name="ObjectShortName">d_wr_bus</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/d_data_bus" type="array">
+      <obj_property name="ElementShortName">d_data_bus[63:0]</obj_property>
+      <obj_property name="ObjectShortName">d_data_bus[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/d_address_bus" type="array">
+      <obj_property name="ElementShortName">d_address_bus[15:0]</obj_property>
+      <obj_property name="ObjectShortName">d_address_bus[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/UUT/datapath_unit/ex_mem_reg_unit/out_instruction" type="array">
+      <obj_property name="ElementShortName">out_instruction[15:0]</obj_property>
+      <obj_property name="ObjectShortName">out_instruction[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/UUT/d_data" type="array">
+      <obj_property name="ElementShortName">d_data[63:0]</obj_property>
+      <obj_property name="ObjectShortName">d_data[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/NUUT/d_data" type="array">
+      <obj_property name="ElementShortName">d_data[63:0]</obj_property>
+      <obj_property name="ObjectShortName">d_data[63:0]</obj_property>
    </wvobject>
 </wave_config>

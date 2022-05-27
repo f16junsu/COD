@@ -21,7 +21,6 @@ module Data_Cache(
     );
     reg [`TAG_SIZE + `LINE_SIZE:0] cache_table [0:3];
     reg [1:0] status;
-    // reg [`WORD_SIZE-1:0] output_data;
     reg [`WORD_SIZE-1:0] dr_hit_counter;
     reg [`WORD_SIZE-1:0] dw_hit_counter;
     reg [`WORD_SIZE-1:0] dr_miss_counter;

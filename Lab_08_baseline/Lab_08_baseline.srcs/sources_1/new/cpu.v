@@ -59,8 +59,6 @@ module cpu(
         wire dc_ready;
         wire dc_w_done;
         wire [`WORD_SIZE-1:0] dc_data;
-        wire [`LINE_SIZE-1:0] d_data_from_c;
-        wire [`WORD_SIZE-1:0] d_addr_from_c;
 
 
 
@@ -141,6 +139,7 @@ module cpu(
                                 .is_halted(is_halted));
 
         assign cmd = dma_begin;
+
         always @(negedge Reset_N) begin
                 BG <= 1'b0;
         end

@@ -44,6 +44,7 @@ module DMA (
         end
     end
 
+    // start reading data from external_device. 1 cycle per each line
     always @(CLK) begin
         if (BG) begin
             case (offset)
@@ -61,6 +62,7 @@ module DMA (
         end
     end
 
+    // for memory write. 4 cycles for 4 word bandwidth
     always @(posedge CLK) begin
         if (offset == 2'b10) begin
             case (memory_counter)
@@ -103,5 +105,8 @@ module DMA (
         offset <= 2'b11;
         memory_counter <= 4'b0;
         addr <= 16'h01f4;
+    end
+    always @(posedge CLK) begin
+        if (interrupt) interrupt <= 1'b0;
     end
 endmodule

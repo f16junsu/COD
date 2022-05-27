@@ -10,7 +10,7 @@
 `define DATA_SIZE 3
 `define DEVICE_BIT_LEN 2
 
-`define FIRE_TIME 50000
+`define FIRE_TIME 100000
 `define INTTERRUPT_DURATION 100
 
 module external_device(
