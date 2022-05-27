@@ -276,7 +276,7 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 						end
 					endcase
 				end
-				else if (BG) begin
+				else if (BG) begin // when writing data from dma
 					if (d_writeM) begin
 						memory[d_address] <= d_data[`WORD_SIZE-1:0];
 						memory[d_address+1] <= d_data[2*`WORD_SIZE-1:`WORD_SIZE];

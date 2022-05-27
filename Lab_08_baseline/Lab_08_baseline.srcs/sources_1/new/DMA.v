@@ -98,6 +98,7 @@ module DMA (
         end
     end
 
+    // end
     always @(negedge BG) begin
         interrupt <= 1'b1;
         BR <= 1'b0;

@@ -130,6 +130,7 @@ module cpu(
                                 .i_data(ic_data),
                                 .dc_ready(dc_ready),
                                 .dc_w_done(dc_w_done),
+                                .d_readM_from_cache(d_readM),
                                 .d_readM(dc_readC),
                                 .d_writeM(dc_writeC),
                                 .d_address(dc_address),

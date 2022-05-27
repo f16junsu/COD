@@ -39,6 +39,7 @@ module Datapath(
 	// Data memory interface
     input dc_ready,
     input dc_w_done,
+    input d_readM_from_cache,
     output d_readM,
     output d_writeM,
     output [`WORD_SIZE-1:0] d_address,
@@ -330,8 +331,12 @@ module Datapath(
 
     // hazard wires assignment
     assign i_mem_hazard = i_readM && !ic_ready;
-    assign d_mem_hazard = (d_readM && !dc_ready) || (d_writeM && !dc_w_done) || ((d_readM || d_writeM) && BG);
+    assign d_mem_hazard = (d_readM && !dc_ready) || (d_writeM && !dc_w_done) || ((d_readM_from_cache || d_writeM) && BG); // hazard when d_cache wants to access memory
     assign stall_PC_to_ic = stall_PC;
+
+    wire test1 = d_readM && !dc_ready;
+    wire test2 = d_writeM && !dc_w_done;
+    wire test3 = (d_readM_from_cache || d_writeM) && BG;
 
     // wire assignment
     assign i_readM = 1;

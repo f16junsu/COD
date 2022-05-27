@@ -48,10 +48,11 @@ module cpu_TB();
 
 	// buses
 	assign d_wr_bus = BG? dma_READ : d_writeM;
-    assign d_data_bus = BG? dma_data :
-						d_writeM? d_data : 4*`WORD_SIZE'bz;
-	assign d_data = BG? 4*`WORD_SIZE'bz :
-					d_readM? d_data_bus : 4*`WORD_SIZE'bz;
+    assign d_data_bus = /* BG? dma_data :
+						(d_writeM && !d_readM) ? d_data : 64'bz; */BG? dma_data :
+						d_writeM? d_data : 64'bz;
+	assign d_data = /* (d_writeM && !d_readM) ? 64'bz : d_data_bus; */BG? 64'bz :
+					d_readM? d_data_bus : 64'bz;
     assign d_address_bus = BG? dma_addr : d_address;
 
 	// instantiate the unit under test
