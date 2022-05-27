@@ -1,11 +1,11 @@
 `timescale 1ns/1ns
 `define PERIOD1 100
-`define MEMORY_SIZE 256	//	size of memory is 2^8 words (reduced size)
+`define MEMORY_SIZE 512	//	size of memory is 2^8 words (reduced size)
 `define WORD_SIZE 16	//	instead of 2^16 words to reduce memory
 			//	requirements in the Active-HDL simulator
 `define LINE_SIZE 64
 
-module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_writeM, d_address, d_data);
+module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_writeM, d_address, d_data, from_dma_d_data, from_dma_d_addr, from_dma_d_writeM);
 	input clk;
 	wire clk;
 	input reset_n;
@@ -30,6 +30,14 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 	wire [`WORD_SIZE-1:0] d_address;
 	inout d_data;
 	wire [`LINE_SIZE-1:0] d_data;
+
+	// DMA interface
+	input [`LINE_SIZE-1:0] from_dma_d_data;
+	wire [`LINE_SIZE-1:0] from_dma_d_data;
+	input [`WORD_SIZE-1:0] from_dma_d_addr;
+	wire [`WORD_SIZE-1:0] from_dma_d_addr;
+	input from_dma_d_writeM;
+	wire from_dma_d_writeM;
 
 	reg [`WORD_SIZE-1:0] memory [0:`MEMORY_SIZE-1];
 	reg [`LINE_SIZE-1:0] i_outputData;
@@ -280,6 +288,12 @@ module Memory(clk, reset_n, i_readM, i_writeM, i_address, i_data, d_readM, d_wri
 							memory[d_address] <= d_data[`WORD_SIZE-1:0];
 						end
 					endcase
+				end
+				else if (from_dma_d_writeM) begin
+					memory[from_dma_d_addr] <= from_dma_d_data[`WORD_SIZE-1:0];
+					memory[from_dma_d_addr+1] <= from_dma_d_data[2*`WORD_SIZE-1:`WORD_SIZE];
+					memory[from_dma_d_addr+2] <= from_dma_d_data[3*`WORD_SIZE-1:2*`WORD_SIZE];
+					memory[from_dma_d_addr+3] <= from_dma_d_data[4*`WORD_SIZE-1:3*`WORD_SIZE];
 				end
 			end
 endmodule

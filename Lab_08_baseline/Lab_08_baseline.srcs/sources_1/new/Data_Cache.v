@@ -37,7 +37,7 @@ module Data_Cache(
                            (bo == 2'b01) ? cache_table[idx][2*`WORD_SIZE-1:`WORD_SIZE]:
                            (bo == 2'b10) ? cache_table[idx][3*`WORD_SIZE-1:2*`WORD_SIZE]:
                            cache_table[idx][4*`WORD_SIZE-1:3*`WORD_SIZE];
-    assign line_mem = writeM? {3*`WORD_SIZE'b0, data} : 77'bz;
+    assign line_mem = writeM? {3*`WORD_SIZE'b0, data} : `LINE_SIZE'bz;
     assign address_to_mem = address;
 
     always @(negedge clk or negedge reset_n) begin

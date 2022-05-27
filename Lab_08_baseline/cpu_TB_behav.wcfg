@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="cpu_TB_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="cpu_TB" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="5820640fs"></ZoomStartTime>
+      <ZoomEndTime time="8125641fs"></ZoomEndTime>
+      <Cursor1Time time="18550fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="158"></NameColumnWidth>
+      <ValueColumnWidth column_width="67"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="32" />
+   <wvobject fp_name="/cpu_TB/reset_n" type="logic">
+      <obj_property name="ElementShortName">reset_n</obj_property>
+      <obj_property name="ObjectShortName">reset_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/i_readM" type="logic">
+      <obj_property name="ElementShortName">i_readM</obj_property>
+      <obj_property name="ObjectShortName">i_readM</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/i_writeM" type="logic">
+      <obj_property name="ElementShortName">i_writeM</obj_property>
+      <obj_property name="ObjectShortName">i_writeM</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/i_address" type="array">
+      <obj_property name="ElementShortName">i_address[15:0]</obj_property>
+      <obj_property name="ObjectShortName">i_address[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/i_data" type="array">
+      <obj_property name="ElementShortName">i_data[63:0]</obj_property>
+      <obj_property name="ObjectShortName">i_data[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/d_readM" type="logic">
+      <obj_property name="ElementShortName">d_readM</obj_property>
+      <obj_property name="ObjectShortName">d_readM</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/d_writeM" type="logic">
+      <obj_property name="ElementShortName">d_writeM</obj_property>
+      <obj_property name="ObjectShortName">d_writeM</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/d_address" type="array">
+      <obj_property name="ElementShortName">d_address[15:0]</obj_property>
+      <obj_property name="ObjectShortName">d_address[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/d_data" type="array">
+      <obj_property name="ElementShortName">d_data[63:0]</obj_property>
+      <obj_property name="ObjectShortName">d_data[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/num_inst" type="array">
+      <obj_property name="ElementShortName">num_inst[15:0]</obj_property>
+      <obj_property name="ObjectShortName">num_inst[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/output_port" type="array">
+      <obj_property name="ElementShortName">output_port[15:0]</obj_property>
+      <obj_property name="ObjectShortName">output_port[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/is_halted" type="logic">
+      <obj_property name="ElementShortName">is_halted</obj_property>
+      <obj_property name="ObjectShortName">is_halted</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/BG" type="logic">
+      <obj_property name="ElementShortName">BG</obj_property>
+      <obj_property name="ObjectShortName">BG</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/cmd" type="logic">
+      <obj_property name="ElementShortName">cmd</obj_property>
+      <obj_property name="ObjectShortName">cmd</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/BR" type="logic">
+      <obj_property name="ElementShortName">BR</obj_property>
+      <obj_property name="ObjectShortName">BR</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/edata" type="array">
+      <obj_property name="ElementShortName">edata[63:0]</obj_property>
+      <obj_property name="ObjectShortName">edata[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/dma_READ" type="logic">
+      <obj_property name="ElementShortName">dma_READ</obj_property>
+      <obj_property name="ObjectShortName">dma_READ</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/dma_addr" type="array">
+      <obj_property name="ElementShortName">dma_addr[15:0]</obj_property>
+      <obj_property name="ObjectShortName">dma_addr[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/dma_data" type="array">
+      <obj_property name="ElementShortName">dma_data[63:0]</obj_property>
+      <obj_property name="ObjectShortName">dma_data[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/dma_offset" type="array">
+      <obj_property name="ElementShortName">dma_offset[1:0]</obj_property>
+      <obj_property name="ObjectShortName">dma_offset[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/dma_end_int" type="logic">
+      <obj_property name="ElementShortName">dma_end_int</obj_property>
+      <obj_property name="ObjectShortName">dma_end_int</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/dma_start_int" type="logic">
+      <obj_property name="ElementShortName">dma_start_int</obj_property>
+      <obj_property name="ObjectShortName">dma_start_int</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/DMA/data_buffer" type="array">
+      <obj_property name="ElementShortName">data_buffer[2:0][63:0]</obj_property>
+      <obj_property name="ObjectShortName">data_buffer[2:0][63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/edevice/data" type="array">
+      <obj_property name="ElementShortName">data[63:0]</obj_property>
+      <obj_property name="ObjectShortName">data[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/TestID" type="array">
+      <obj_property name="ElementShortName">TestID[55:0][39:0]</obj_property>
+      <obj_property name="ObjectShortName">TestID[55:0][39:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/TestNumInst" type="array">
+      <obj_property name="ElementShortName">TestNumInst[55:0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">TestNumInst[55:0][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/TestAns" type="array">
+      <obj_property name="ElementShortName">TestAns[55:0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">TestAns[55:0][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/TestPassed" type="array">
+      <obj_property name="ElementShortName">TestPassed[55:0]</obj_property>
+      <obj_property name="ObjectShortName">TestPassed[55:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/i" type="array">
+      <obj_property name="ElementShortName">i[15:0]</obj_property>
+      <obj_property name="ObjectShortName">i[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/num_clock" type="array">
+      <obj_property name="ElementShortName">num_clock[15:0]</obj_property>
+      <obj_property name="ObjectShortName">num_clock[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/Passed" type="array">
+      <obj_property name="ElementShortName">Passed[15:0]</obj_property>
+      <obj_property name="ObjectShortName">Passed[15:0]</obj_property>
+   </wvobject>
+</wave_config>

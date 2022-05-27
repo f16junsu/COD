@@ -21,7 +21,13 @@ module cpu(
 
         output [`WORD_SIZE-1:0] num_inst,
         output [`WORD_SIZE-1:0] output_port,
-        output is_halted
+        output is_halted,
+
+        input dma_begin,
+        input dma_end,
+        input BR,
+        output reg BG,
+        output cmd
 );
         wire use_rs;
         wire use_rt;
@@ -53,6 +59,8 @@ module cpu(
         wire dc_ready;
         wire dc_w_done;
         wire [`WORD_SIZE-1:0] dc_data;
+        wire [`LINE_SIZE-1:0] d_data_from_c;
+        wire [`WORD_SIZE-1:0] d_addr_from_c;
 
 
 
@@ -114,11 +122,12 @@ module cpu(
                                 .RegDest_to_ID_EX(RegDest_to_ID_EX),
                                 .ALUop_to_ID_EX(ALUop_to_ID_EX),
                                 .ALUSource_to_ID_EX(ALUSource_to_ID_EX),
+                                .BG(BG),
                                 .instruction(instruction),
                                 .stall_PC_to_ic(stall_PC),
                                 .ic_ready(ic_ready),
                                 .i_readM(ic_readC),
-                                //.i_writeM(i_writeM),
+                                .i_writeM(i_writeM),
                                 .i_address(ic_address),
                                 .i_data(ic_data),
                                 .dc_ready(dc_ready),
@@ -131,4 +140,14 @@ module cpu(
                                 .output_port(output_port),
                                 .is_halted(is_halted));
 
+        assign cmd = dma_begin;
+        always @(negedge Reset_N) begin
+                BG <= 1'b0;
+        end
+        always @(posedge Clk) begin
+                if (!d_readM && !d_writeM && BR) BG <= 1'b1;
+        end
+        always @(negedge BR) begin
+                BG <= 1'b0;
+        end
 endmodule
