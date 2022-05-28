@@ -1,0 +1,26 @@
+# compile verilog/system verilog design source files
+verilog xil_defaultlib  \
+"../../../../Lab_08_extra.srcs/sources_1/new/ALU.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/BTB.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/Control.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/DMA.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/Data_Cache.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/Datapath.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/EX_MEM_REG.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/Hazard.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/ID_EX_REG.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/IF_ID_REG.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/Instruction_Cache.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/MEM_WB_REG.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/PC.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/RF.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/cpu.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/external_device.v" \
+"../../../../Lab_08_extra.srcs/sources_1/new/memory.v" \
+"../../../../Lab_08_extra.srcs/sim_1/new/cpu_TB.v" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort
