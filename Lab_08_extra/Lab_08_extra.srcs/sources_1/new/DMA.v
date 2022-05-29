@@ -26,7 +26,7 @@ module DMA (
     output reg interrupt);
     /* Implement your own logic */
     reg [3:0] memory_counter;
-    reg [4*`WORD_SIZE-1:0] data_buffer [2:0];
+    reg in_process;
 
     initial begin
         BR <= 1'b0;
@@ -35,6 +35,7 @@ module DMA (
         memory_counter <= 4'b0;
         interrupt <= 1'b0;
         addr <= 16'h01f4;
+        in_process <= 1'b0;
     end
 
     // receive command
@@ -45,44 +46,75 @@ module DMA (
     end
 
     // for memory write. 4 cycles for 4 word bandwidth
+    // deassert BR whenever 4 word are written
     assign data = edata;
-    always @(posedge CLK or posedge BG) begin
+    always @(posedge CLK) begin
         if (BG) begin
             case (memory_counter)
-                4'b0000: begin
-                    offset <= 2'b00;
-                    READ <= 1;
-                    memory_counter <= memory_counter + 1;
-                end
+                4'b0000: ;
                 4'b0001: memory_counter <= memory_counter + 1;
                 4'b0010: memory_counter <= memory_counter + 1;
                 4'b0011: memory_counter <= memory_counter + 1;
                 4'b0100: begin
-                    offset <= 2'b01;
-                    addr <= addr + 4;
-                    memory_counter <= memory_counter + 1;
+                    BR <= 1'b0;
+                    READ <= 1'b0;
                 end
                 4'b0101: memory_counter <= memory_counter + 1;
                 4'b0110: memory_counter <= memory_counter + 1;
                 4'b0111: memory_counter <= memory_counter + 1;
                 4'b1000: begin
-                    offset <= 2'b10;
-                    addr <= addr + 4;
-                    memory_counter <= memory_counter + 1;
+                    BR <= 1'b0;
+                    READ <= 1'b0;
                 end
                 4'b1001: memory_counter <= memory_counter + 1;
                 4'b1010: memory_counter <= memory_counter + 1;
                 4'b1011: memory_counter <= memory_counter + 1;
                 4'b1100: begin
-                    READ <= 0;
+                    in_process <= 1'b0;
                     BR <= 1'b0;
+                    READ <= 1'b0;
                 end
             endcase
         end
     end
+    // to execute dma work
+    always @(posedge BG) begin
+        case (memory_counter)
+            4'b0000: begin
+                in_process <= 1'b1;
+                offset <= 2'b00;
+                READ <= 1'b1;
+                memory_counter <= memory_counter + 1;
+            end
+            4'b0100: begin
+                offset <= 2'b01;
+                READ <= 1'b1;
+                addr <= addr + 4;
+                memory_counter <= memory_counter + 1;
+            end
+            4'b1000: begin
+                offset <= 2'b10;
+                READ <= 1'b1;
+                addr <= addr + 4;
+                memory_counter <= memory_counter + 1;
+            end
+            default: ;
+        endcase
+    end
+    // to rerequest bus
+    always @(posedge CLK) begin
+        if (in_process && !BG) begin
+            case (memory_counter)
+                4'b0100: BR <= 1'b1;
+                4'b1000: BR <= 1'b1;
+                default: ;
+            endcase
+        end
+    end
+
 
     // end
-    always @(negedge BG) begin
+    always @(negedge in_process) begin
         interrupt <= 1'b1;
         BR <= 1'b0;
         READ <= 1'b0;

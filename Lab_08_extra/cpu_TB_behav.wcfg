@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="49707910fs"></ZoomStartTime>
-      <ZoomEndTime time="51401911fs"></ZoomEndTime>
-      <Cursor1Time time="50250000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="20000001fs"></ZoomEndTime>
+      <Cursor1Time time="51361fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="144"></NameColumnWidth>
-      <ValueColumnWidth column_width="120"></ValueColumnWidth>
+      <ValueColumnWidth column_width="100"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="34" />
+   <WVObjectSize size="45" />
    <wvobject fp_name="/cpu_TB/reset_n" type="logic">
       <obj_property name="ElementShortName">reset_n</obj_property>
       <obj_property name="ObjectShortName">reset_n</obj_property>
@@ -112,18 +112,6 @@
       <obj_property name="ElementShortName">dma_start_int</obj_property>
       <obj_property name="ObjectShortName">dma_start_int</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu_TB/d_wr_bus" type="logic">
-      <obj_property name="ElementShortName">d_wr_bus</obj_property>
-      <obj_property name="ObjectShortName">d_wr_bus</obj_property>
-   </wvobject>
-   <wvobject fp_name="/cpu_TB/d_data_bus" type="array">
-      <obj_property name="ElementShortName">d_data_bus[63:0]</obj_property>
-      <obj_property name="ObjectShortName">d_data_bus[63:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/cpu_TB/d_address_bus" type="array">
-      <obj_property name="ElementShortName">d_address_bus[15:0]</obj_property>
-      <obj_property name="ObjectShortName">d_address_bus[15:0]</obj_property>
-   </wvobject>
    <wvobject fp_name="/cpu_TB/TestID" type="array">
       <obj_property name="ElementShortName">TestID[55:0][39:0]</obj_property>
       <obj_property name="ObjectShortName">TestID[55:0][39:0]</obj_property>
@@ -152,8 +140,64 @@
       <obj_property name="ElementShortName">Passed[15:0]</obj_property>
       <obj_property name="ObjectShortName">Passed[15:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu_TB/UUT/datapath_unit/ex_mem_reg_unit/out_instruction" type="array">
-      <obj_property name="ElementShortName">out_instruction[15:0]</obj_property>
-      <obj_property name="ObjectShortName">out_instruction[15:0]</obj_property>
+   <wvobject fp_name="/cpu_TB/NUUT/memory[500]" type="array">
+      <obj_property name="ElementShortName">[500][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[500][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/NUUT/memory[501]" type="array">
+      <obj_property name="ElementShortName">[501][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[501][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/NUUT/memory[502]" type="array">
+      <obj_property name="ElementShortName">[502][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[502][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/NUUT/memory[503]" type="array">
+      <obj_property name="ElementShortName">[503][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[503][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/NUUT/memory[504]" type="array">
+      <obj_property name="ElementShortName">[504][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[504][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/NUUT/memory[505]" type="array">
+      <obj_property name="ElementShortName">[505][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[505][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/NUUT/memory[506]" type="array">
+      <obj_property name="ElementShortName">[506][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[506][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/NUUT/memory[507]" type="array">
+      <obj_property name="ElementShortName">[507][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[507][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/NUUT/memory[508]" type="array">
+      <obj_property name="ElementShortName">[508][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[508][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/NUUT/memory[509]" type="array">
+      <obj_property name="ElementShortName">[509][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[509][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/NUUT/memory[510]" type="array">
+      <obj_property name="ElementShortName">[510][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[510][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/NUUT/memory[511]" type="array">
+      <obj_property name="ElementShortName">[511][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[511][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/edevice/storage[0]" type="array">
+      <obj_property name="ElementShortName">[0][63:0]</obj_property>
+      <obj_property name="ObjectShortName">[0][63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/edevice/storage[1]" type="array">
+      <obj_property name="ElementShortName">[1][63:0]</obj_property>
+      <obj_property name="ObjectShortName">[1][63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/edevice/storage[2]" type="array">
+      <obj_property name="ElementShortName">[2][63:0]</obj_property>
+      <obj_property name="ObjectShortName">[2][63:0]</obj_property>
    </wvobject>
 </wave_config>

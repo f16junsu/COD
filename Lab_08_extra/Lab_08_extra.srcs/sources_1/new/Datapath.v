@@ -334,10 +334,6 @@ module Datapath(
     assign d_mem_hazard = (d_readM && !dc_ready) || (d_writeM && !dc_w_done) || ((d_readM_from_cache || d_writeM) && BG); // hazard when d_cache wants to access memory
     assign stall_PC_to_ic = stall_PC;
 
-    wire test1 = d_readM && !dc_ready;
-    wire test2 = d_writeM && !dc_w_done;
-    wire test3 = (d_readM_from_cache || d_writeM) && BG;
-
     // wire assignment
     assign i_readM = 1;
     assign i_writeM = 0;
