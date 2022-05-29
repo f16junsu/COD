@@ -21,12 +21,11 @@ module DMA (
     input cmd,
     output reg BR, READ,
     output reg [`WORD_SIZE - 1 : 0] addr,
-    output reg [4 * `WORD_SIZE - 1 : 0] data,
+    output [4 * `WORD_SIZE - 1 : 0] data,
     output reg [1:0] offset,
     output reg interrupt);
     /* Implement your own logic */
     reg [3:0] memory_counter;
-    reg [4*`WORD_SIZE-1:0] data_buffer [2:0];
 
     initial begin
         BR <= 1'b0;
@@ -44,38 +43,21 @@ module DMA (
         end
     end
 
-    // start reading data from external_device. 1 cycle per each line
-    always @(CLK) begin
-        if (BG) begin
-            case (offset)
-                2'b11: if (CLK) offset <= 2'b00;
-                2'b00: begin
-                    if (CLK) offset <= 2'b01;
-                    else data_buffer[offset] <= edata;
-                end
-                2'b01: begin
-                    if (CLK) offset <= 2'b10;
-                    else data_buffer[offset] <= edata;
-                end
-                2'b10: if (!CLK) data_buffer[offset] <= edata;
-            endcase
-        end
-    end
-
     // for memory write. 4 cycles for 4 word bandwidth
-    always @(posedge CLK) begin
-        if (offset == 2'b10) begin
+    assign data = edata;
+    always @(posedge CLK or posedge BG) begin
+        if (BG) begin
             case (memory_counter)
                 4'b0000: begin
+                    offset <= 2'b00;
                     READ <= 1;
-                    data <= data_buffer[0];
                     memory_counter <= memory_counter + 1;
                 end
                 4'b0001: memory_counter <= memory_counter + 1;
                 4'b0010: memory_counter <= memory_counter + 1;
                 4'b0011: memory_counter <= memory_counter + 1;
                 4'b0100: begin
-                    data <= data_buffer[1];
+                    offset <= 2'b01;
                     addr <= addr + 4;
                     memory_counter <= memory_counter + 1;
                 end
@@ -83,7 +65,7 @@ module DMA (
                 4'b0110: memory_counter <= memory_counter + 1;
                 4'b0111: memory_counter <= memory_counter + 1;
                 4'b1000: begin
-                    data <= data_buffer[2];
+                    offset <= 2'b10;
                     addr <= addr + 4;
                     memory_counter <= memory_counter + 1;
                 end
