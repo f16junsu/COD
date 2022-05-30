@@ -60,7 +60,7 @@ module cpu(
         wire dc_w_done;
         wire [`WORD_SIZE-1:0] dc_data;
 
-
+        wire not_use_bus;
 
         Instruction_Cache ic_unit (.clk(Clk),
                                    .reset_n(Reset_N),
@@ -123,6 +123,7 @@ module cpu(
                                 .BG(BG),
                                 .instruction(instruction),
                                 .stall_PC_to_ic(stall_PC),
+                                .not_use_bus(not_use_bus),
                                 .ic_ready(ic_ready),
                                 .i_readM(ic_readC),
                                 .i_writeM(i_writeM),
@@ -145,7 +146,10 @@ module cpu(
                 BG <= 1'b0;
         end
         always @(posedge Clk) begin
-                if (!d_readM && !d_writeM && BR) BG <= 1'b1;
+                //if (!d_readM && !d_writeM && BR) BG <= 1'b1;
+                if (BR) begin
+                        if (!d_readM && !d_writeM && not_use_bus) BG <= 1'b1;
+                end
         end
         always @(negedge BR) begin
                 BG <= 1'b0;

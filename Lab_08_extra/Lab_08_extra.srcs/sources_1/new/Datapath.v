@@ -28,6 +28,7 @@ module Datapath(
     input BG,
     output [`WORD_SIZE-1:0] instruction,
     output stall_PC_to_ic,
+    output not_use_bus,
 
 	// Instruction memory interface
     input ic_ready,
@@ -328,6 +329,8 @@ module Datapath(
                                 .out_PC_plus_1(PC_plus_1_from_MEM_WB),
                                 .out_RF_read_data1(RF_read_data1_in_WB),
                                 .out_RFwrite_destination(rw_destination));
+
+    assign not_use_bus = !(instruction_to_EX_MEM[15:12] == 4'b1000) && !(instruction[15:12] == 4'b1000);
 
     // hazard wires assignment
     assign i_mem_hazard = i_readM && !ic_ready;

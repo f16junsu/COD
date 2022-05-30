@@ -40,7 +40,7 @@ module external_device(
        /* Randomized storage initialization.
        * You may want to change these for the
        * debugging */
-        #(`FIRE_TIME);
+        #(49800);
       storage[0] <= $random;
       storage[1] <= $random;
       storage[2] <= $random;

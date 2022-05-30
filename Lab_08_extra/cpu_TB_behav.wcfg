@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="20000001fs"></ZoomEndTime>
-      <Cursor1Time time="51361fs"></Cursor1Time>
+      <ZoomStartTime time="48605053fs"></ZoomStartTime>
+      <ZoomEndTime time="53545054fs"></ZoomEndTime>
+      <Cursor1Time time="53170053fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="144"></NameColumnWidth>
-      <ValueColumnWidth column_width="100"></ValueColumnWidth>
+      <ValueColumnWidth column_width="96"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="45" />
+   <WVObjectSize size="46" />
    <wvobject fp_name="/cpu_TB/reset_n" type="logic">
       <obj_property name="ElementShortName">reset_n</obj_property>
       <obj_property name="ObjectShortName">reset_n</obj_property>
@@ -139,6 +139,10 @@
    <wvobject fp_name="/cpu_TB/Passed" type="array">
       <obj_property name="ElementShortName">Passed[15:0]</obj_property>
       <obj_property name="ObjectShortName">Passed[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu_TB/UUT/datapath_unit/ex_mem_reg_unit/out_instruction" type="array">
+      <obj_property name="ElementShortName">out_instruction[15:0]</obj_property>
+      <obj_property name="ObjectShortName">out_instruction[15:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu_TB/NUUT/memory[500]" type="array">
       <obj_property name="ElementShortName">[500][15:0]</obj_property>
