@@ -10,8 +10,11 @@
 `define DATA_SIZE 3
 `define DEVICE_BIT_LEN 2
 
-`define FIRE_TIME 46500 // read hit at clock 465(46500)
-//`define FIRE_TIME 48700
+`define FIRE_TIME 46500
+// read hit at clock 465(46500)
+// read miss at clock 175(17500)
+// write at clock 498(49800)
+
 `define INTTERRUPT_DURATION 100
 
 module external_device(

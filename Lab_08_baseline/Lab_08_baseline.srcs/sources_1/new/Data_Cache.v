@@ -4,6 +4,7 @@
 module Data_Cache(
     input clk,
     input reset_n,
+    input BG,
 
     // path between Datapath
     input readC,
@@ -65,15 +66,25 @@ module Data_Cache(
                                 ready <= 1;
                             end
                             else begin // miss
+                                if (BG) begin
+                                    ;
+                                end
+                                else begin
+                                    dr_miss_counter <= dr_miss_counter + 1;
+                                    status <= 2'b01;
+                                    readM <= 1;
+                                end
+                            end
+                        end
+                        else begin // if invalid(miss)
+                            if (BG) begin
+                                    ;
+                            end
+                            else begin
                                 dr_miss_counter <= dr_miss_counter + 1;
                                 status <= 2'b01;
                                 readM <= 1;
                             end
-                        end
-                        else begin // if invalid(miss)
-                            dr_miss_counter <= dr_miss_counter + 1;
-                            status <= 2'b01;
-                            readM <= 1;
                         end
                     end
                     2'b01: status <= 2'b10;
@@ -91,26 +102,41 @@ module Data_Cache(
                     2'b00: begin // initial state
                         if (cache_table[idx][`TAG_SIZE + `LINE_SIZE]) begin // if valid
                             if (cache_table[idx][`TAG_SIZE-1 + `LINE_SIZE:`LINE_SIZE] == address[`WORD_SIZE-1:4]) begin // hit
-                                dw_hit_counter <= dw_hit_counter + 1;
-                                case (bo)
-                                    2'b00: cache_table[idx][`WORD_SIZE-1:0] <= data;
-                                    2'b01: cache_table[idx][2*`WORD_SIZE-1:`WORD_SIZE] <= data;
-                                    2'b10: cache_table[idx][3*`WORD_SIZE-1:2*`WORD_SIZE] <= data;
-                                    2'b11: cache_table[idx][4*`WORD_SIZE-1:3*`WORD_SIZE] <= data;
-                                endcase
-                                status <= 2'b01;
-                                writeM <= 1;
+                                if (BG) begin
+                                    ;
+                                end
+                                else begin
+                                    dw_hit_counter <= dw_hit_counter + 1;
+                                    case (bo)
+                                        2'b00: cache_table[idx][`WORD_SIZE-1:0] <= data;
+                                        2'b01: cache_table[idx][2*`WORD_SIZE-1:`WORD_SIZE] <= data;
+                                        2'b10: cache_table[idx][3*`WORD_SIZE-1:2*`WORD_SIZE] <= data;
+                                        2'b11: cache_table[idx][4*`WORD_SIZE-1:3*`WORD_SIZE] <= data;
+                                    endcase
+                                    status <= 2'b01;
+                                    writeM <= 1;
+                                end
                             end
                             else begin // miss
+                                if (BG) begin
+                                    ;
+                                end
+                                else begin
+                                    dw_miss_counter <= dw_miss_counter + 1;
+                                    status <= 2'b01;
+                                    writeM <= 1;
+                                end
+                            end
+                        end
+                        else begin // if invalid(miss)
+                            if (BG) begin
+                                    ;
+                            end
+                            else begin
                                 dw_miss_counter <= dw_miss_counter + 1;
                                 status <= 2'b01;
                                 writeM <= 1;
                             end
-                        end
-                        else begin // if invalid(miss)
-                            dw_miss_counter <= dw_miss_counter + 1;
-                            status <= 2'b01;
-                            writeM <= 1;
                         end
                     end
                     2'b01: status <= 2'b10;

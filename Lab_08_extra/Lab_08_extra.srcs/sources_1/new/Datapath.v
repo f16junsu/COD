@@ -330,6 +330,7 @@ module Datapath(
                                 .out_RF_read_data1(RF_read_data1_in_WB),
                                 .out_RFwrite_destination(rw_destination));
 
+    // to check if younger instructions are write
     assign not_use_bus = !(instruction_to_EX_MEM[15:12] == 4'b1000) && !(instruction[15:12] == 4'b1000);
 
     // hazard wires assignment

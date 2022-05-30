@@ -75,6 +75,7 @@ module cpu(
 
         Data_Cache dc_unit (.clk(Clk),
                             .reset_n(Reset_N),
+                            .BG(BG),
                             .readC(dc_readC),
                             .writeC(dc_writeC),
                             .address(dc_address),
@@ -146,7 +147,6 @@ module cpu(
                 BG <= 1'b0;
         end
         always @(posedge Clk) begin
-                //if (!d_readM && !d_writeM && BR) BG <= 1'b1;
                 if (BR) begin
                         if (!d_readM && !d_writeM && not_use_bus) BG <= 1'b1;
                 end

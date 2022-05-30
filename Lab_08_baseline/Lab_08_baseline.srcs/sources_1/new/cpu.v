@@ -75,6 +75,7 @@ module cpu(
 
         Data_Cache dc_unit (.clk(Clk),
                             .reset_n(Reset_N),
+                            .BG(BG),
                             .readC(dc_readC),
                             .writeC(dc_writeC),
                             .address(dc_address),

@@ -11,6 +11,8 @@
 `define DEVICE_BIT_LEN 2
 
 `define FIRE_TIME 49800 // during memory access by SWD
+// read hit at clock 465(46500)
+// read miss at clock 175(17500)
 `define INTTERRUPT_DURATION 100
 
 module external_device(
@@ -40,7 +42,7 @@ module external_device(
        /* Randomized storage initialization.
        * You may want to change these for the
        * debugging */
-        #(49800);
+        #(10*`FIRE_TIME);
       storage[0] <= $random;
       storage[1] <= $random;
       storage[2] <= $random;
